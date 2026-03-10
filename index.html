@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>氣泡排序演算法分析</title>
+    <style>
+        :root {
+            --bg-start: #f0f7ff;
+            --bg-end: #eef2ff;
+            --surface: #ffffff;
+            --surface-soft: #f8fbff;
+            --text-main: #1f2d3d;
+            --text-sub: #4b5b6b;
+            --primary: #2d7ff9;
+            --primary-deep: #1e5fd1;
+            --success: #1f9d62;
+            --danger: #e05252;
+            --warning: #f3b431;
+            --border: #dfe8f4;
+        }
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 28px;
+            background: linear-gradient(145deg, var(--bg-start), var(--bg-end));
+            color: var(--text-main);
+            line-height: 1.8;
+        }
+        .container {
+            background-color: var(--surface);
+            padding: 36px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 16px 40px rgba(25, 65, 120, 0.10);
+        }
+        h1 {
+            color: #123a6b;
+            background: linear-gradient(135deg, #eaf3ff, #f2f6ff);
+            border: 1px solid #d7e8ff;
+            border-left: 8px solid var(--primary);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-top: 0;
+            letter-spacing: 0.3px;
+        }
+        h2 {
+            color: #274664;
+            margin-top: 34px;
+            margin-bottom: 14px;
+            padding-left: 12px;
+            border-left: 5px solid #8bb4ff;
+        }
+        h3 {
+            color: #36526d;
+            margin-bottom: 8px;
+        }
+        p {
+            color: var(--text-sub);
+            margin-top: 8px;
+        }
+        .top-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            margin: 16px 0 24px;
+        }
+        .stat-card {
+            background: linear-gradient(145deg, #f7fbff, #eef5ff);
+            border: 1px solid #dce9fb;
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+        .stat-card .label {
+            display: block;
+            font-size: 13px;
+            color: #5f7390;
+            margin-bottom: 3px;
+        }
+        .stat-card .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3f6a;
+        }
+        .code-block {
+            background: linear-gradient(135deg, #17263a, #1f3857);
+            color: #e9f0fa;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid #304d71;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .code-block code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+        }
+        .complexity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .complexity-table th,
+        .complexity-table td {
+            border: 1px solid #e4ecf7;
+            padding: 12px;
+            text-align: left;
+        }
+        .complexity-table th {
+            background: linear-gradient(90deg, var(--primary), var(--primary-deep));
+            color: white;
+        }
+        .complexity-table tr:nth-child(even) {
+            background-color: #f8fbff;
+        }
+        .complexity-table tr:hover {
+            background-color: #eaf4ff;
+        }
+        .highlight {
+            background-color: #fff9eb;
+            padding: 16px;
+            border: 1px solid #ffe6ac;
+            border-left: 6px solid var(--warning);
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .example {
+            background-color: #edf9f1;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #cfead8;
+            margin: 15px 0;
+        }
+        .formula {
+            text-align: center;
+            font-size: 19px;
+            color: #c73e3e;
+            margin: 20px 0;
+            font-weight: bold;
+            background: #fff5f5;
+            border: 1px solid #ffd9d9;
+            border-radius: 10px;
+            padding: 12px;
+        }
+        ul {
+            line-height: 2;
+            color: var(--text-sub);
+        }
+        .visualization {
+            background-color: var(--surface-soft);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #d9e7f8;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 12px;
+            background-color: white;
+            border: 1px solid #e3ebf8;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(20, 61, 118, 0.05);
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 14px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .formula {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 氣泡排序（Bubble Sort）演算法分析</h1>
+        <div class="top-grid">
+            <div class="stat-card">
+                <span class="label">最佳時間</span>
+                <span class="value">O(n)</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">平均時間</span>
+                <span class="value">O(n²)</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">最壞時間</span>
+                <span class="value">O(n²)</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">空間複雜度</span>
+                <span class="value">O(1)</span>
+            </div>
+        </div>
+        
+        <h2>📖 演算法概述</h2>
+        <p>
+            氣泡排序是一種簡單的排序演算法，它重複地遍歷待排序的數列，一次比較兩個元素，
+            如果它們的順序錯誤就把它們交換過來。遍歷數列的工作重複進行，直到不需要再交換為止，
+            這表示數列已經排序完成。
+        </p>
+        <p>
+            這個演算法的名字由來是因為越小的元素會經由交換慢慢「浮」到數列的頂端，
+            就如同水中的氣泡一樣浮到水面。
+        </p>
+
+        <h2>💻 演算法實作（JavaScript）</h2>
+        <div class="code-block">
+            <code><pre>function bubbleSort(arr) {
+    const n = arr.length;
+    
+    // 外層迴圈：控制排序輪數
+    for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
+        
+        // 內層迴圈：進行相鄰元素的比較與交換
+        for (let j = 0; j < n - i - 1; j++) {
+            // 如果前一個元素大於後一個元素，則交換
+            if (arr[j] > arr[j + 1]) {
+                // 交換元素
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                swapped = true;
+            }
+        }
+        
+        // 如果這一輪沒有發生交換，表示已經排序完成
+        if (!swapped) {
+            break;
+        }
+    }
+    
+    return arr;
+}
+
+// 使用範例
+const array = [64, 34, 25, 12, 22, 11, 90];
+console.log("原始陣列：", array);
+console.log("排序後：", bubbleSort([...array]));</pre></code>
+        </div>
+
+        <h2>📊 時間複雜度分析</h2>
+        
+        <h3>1. 最佳情況（Best Case）</h3>
+        <div class="highlight">
+            <strong>時間複雜度：O(n)</strong>
+            <p>當輸入的陣列已經是有序的時候，只需要進行一次遍歷，比較 n-1 次，不需要進行任何交換。
+            使用 swapped 標記可以在第一輪結束後就停止演算法。</p>
+        </div>
+
+        <h3>2. 平均情況（Average Case）</h3>
+        <div class="highlight">
+            <strong>時間複雜度：O(n²)</strong>
+            <p>在平均情況下，需要進行約 n²/4 次比較和約 n²/4 次交換。</p>
+        </div>
+
+        <h3>3. 最壞情況（Worst Case）</h3>
+        <div class="highlight">
+            <strong>時間複雜度：O(n²)</strong>
+            <p>當輸入的陣列是完全逆序的時候，需要進行最多次數的比較和交換。</p>
+        </div>
+
+        <div class="formula">
+            比較次數 = (n-1) + (n-2) + (n-3) + ... + 1 = n(n-1)/2 = O(n²)
+        </div>
+
+        <h3>詳細計算過程</h3>
+        <p>對於長度為 n 的陣列：</p>
+        <ul>
+            <li><strong>第 1 輪</strong>：需要比較 n-1 次</li>
+            <li><strong>第 2 輪</strong>：需要比較 n-2 次</li>
+            <li><strong>第 3 輪</strong>：需要比較 n-3 次</li>
+            <li>...</li>
+            <li><strong>第 n-1 輪</strong>：需要比較 1 次</li>
+        </ul>
+        <p>總比較次數 = (n-1) + (n-2) + ... + 1 = <strong>n(n-1)/2</strong></p>
+
+        <h2>💾 空間複雜度分析</h2>
+        <div class="highlight">
+            <strong>空間複雜度：O(1)</strong>
+            <p>氣泡排序是一種原地排序演算法，只需要常數額外空間來存儲臨時變量（用於交換元素）。
+            不需要額外的陣列或大量的記憶體空間。</p>
+        </div>
+
+        <h2>📈 複雜度總結表</h2>
+        <table class="complexity-table">
+            <thead>
+                <tr>
+                    <th>複雜度類型</th>
+                    <th>最佳情況</th>
+                    <th>平均情況</th>
+                    <th>最壞情況</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>時間複雜度</strong></td>
+                    <td>O(n)</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                </tr>
+                <tr>
+                    <td><strong>空間複雜度</strong></td>
+                    <td colspan="3">O(1)</td>
+                </tr>
+                <tr>
+                    <td><strong>比較次數</strong></td>
+                    <td>n-1</td>
+                    <td>n(n-1)/2</td>
+                    <td>n(n-1)/2</td>
+                </tr>
+                <tr>
+                    <td><strong>交換次數</strong></td>
+                    <td>0</td>
+                    <td>~n²/4</td>
+                    <td>n(n-1)/2</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🔍 演算法執行範例</h2>
+        <div class="visualization">
+            <h3>以陣列 [5, 3, 8, 4, 2] 為例：</h3>
+            
+            <div class="step">
+                <strong>初始狀態：</strong> [5, 3, 8, 4, 2]
+            </div>
+            
+            <div class="step">
+                <strong>第 1 輪：</strong><br>
+                &nbsp;&nbsp;比較 5 和 3：[<span style="color: #e74c3c;">3, 5</span>, 8, 4, 2]（交換）<br>
+                &nbsp;&nbsp;比較 5 和 8：[3, <span style="color: #27ae60;">5, 8</span>, 4, 2]（不交換）<br>
+                &nbsp;&nbsp;比較 8 和 4：[3, 5, <span style="color: #e74c3c;">4, 8</span>, 2]（交換）<br>
+                &nbsp;&nbsp;比較 8 和 2：[3, 5, 4, <span style="color: #e74c3c;">2, 8</span>]（交換）<br>
+                &nbsp;&nbsp;<em>→ 最大值 8 已就位</em>
+            </div>
+            
+            <div class="step">
+                <strong>第 2 輪：</strong><br>
+                &nbsp;&nbsp;比較 3 和 5：[<span style="color: #27ae60;">3, 5</span>, 4, 2, 8]（不交換）<br>
+                &nbsp;&nbsp;比較 5 和 4：[3, <span style="color: #e74c3c;">4, 5</span>, 2, 8]（交換）<br>
+                &nbsp;&nbsp;比較 5 和 2：[3, 4, <span style="color: #e74c3c;">2, 5</span>, 8]（交換）<br>
+                &nbsp;&nbsp;<em>→ 次大值 5 已就位</em>
+            </div>
+            
+            <div class="step">
+                <strong>第 3 輪：</strong><br>
+                &nbsp;&nbsp;比較 3 和 4：[<span style="color: #27ae60;">3, 4</span>, 2, 5, 8]（不交換）<br>
+                &nbsp;&nbsp;比較 4 和 2：[3, <span style="color: #e74c3c;">2, 4</span>, 5, 8]（交換）<br>
+                &nbsp;&nbsp;<em>→ 4 已就位</em>
+            </div>
+            
+            <div class="step">
+                <strong>第 4 輪：</strong><br>
+                &nbsp;&nbsp;比較 3 和 2：[<span style="color: #e74c3c;">2, 3</span>, 4, 5, 8]（交換）<br>
+                &nbsp;&nbsp;<em>→ 3 已就位</em>
+            </div>
+            
+            <div class="step">
+                <strong>最終結果：</strong> [2, 3, 4, 5, 8] ✓
+            </div>
+        </div>
+
+        <h2>✅ 優點</h2>
+        <ul>
+            <li>實作簡單，容易理解</li>
+            <li>不需要額外的記憶體空間（原地排序）</li>
+            <li>是穩定的排序演算法（相同元素的相對位置不會改變）</li>
+            <li>對於小型資料集或幾乎已排序的資料效率尚可</li>
+        </ul>
+
+        <h2>❌ 缺點</h2>
+        <ul>
+            <li>時間複雜度較高，對大型資料集效率很差</li>
+            <li>需要進行大量的元素交換操作</li>
+            <li>實際應用中很少使用，主要用於教學目的</li>
+        </ul>
+
+        <h2>🔄 與其他排序演算法比較</h2>
+        <table class="complexity-table">
+            <thead>
+                <tr>
+                    <th>演算法</th>
+                    <th>最佳時間</th>
+                    <th>平均時間</th>
+                    <th>最壞時間</th>
+                    <th>空間複雜度</th>
+                    <th>穩定性</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>氣泡排序</strong></td>
+                    <td>O(n)</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(1)</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td><strong>選擇排序</strong></td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(1)</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td><strong>插入排序</strong></td>
+                    <td>O(n)</td>
+                    <td>O(n²)</td>
+                    <td>O(n²)</td>
+                    <td>O(1)</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td><strong>快速排序</strong></td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n²)</td>
+                    <td>O(log n)</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td><strong>合併排序</strong></td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n log n)</td>
+                    <td>O(n)</td>
+                    <td>✓</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🎯 適用場景</h2>
+        <div class="example">
+            <p><strong>氣泡排序適合用於：</strong></p>
+            <ul>
+                <li>資料量很小的情況（n < 50）</li>
+                <li>資料已經基本有序</li>
+                <li>教學演示排序演算法的基本概念</li>
+                <li>對穩定性有要求且資料量不大的情況</li>
+            </ul>
+            <p><strong>不建議用於：</strong></p>
+            <ul>
+                <li>大型資料集的排序</li>
+                <li>對效能有較高要求的生產環境</li>
+            </ul>
+        </div>
+
+        <h2>📝 總結</h2>
+        <p>
+            氣泡排序雖然實作簡單，但由於其 O(n²) 的時間複雜度，在實際應用中效率較低。
+            它主要的價值在於教學，幫助初學者理解排序演算法的基本概念和比較、交換的操作原理。
+            在實際專案中，應該選擇更高效的排序演算法，如快速排序或合併排序。
+        </p>
+        <p>
+            然而，對於非常小的資料集或已經幾乎排序好的資料，氣泡排序的效能可能與更複雜的演算法相當，
+            而其簡單性使得它在某些特定場景下仍有一定的實用價值。
+        </p>
+    </div>
+</body>
+</html>
