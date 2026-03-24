@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選擇排序是什麼｜Selection Sort 視覺化介紹</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --bg: #f2efe4;
+            --paper: rgba(255, 253, 249, 0.9);
+            --paper-strong: #fffefb;
+            --ink: #1f2933;
+            --muted: #55606d;
+            --line: rgba(71, 85, 105, 0.16);
+            --primary: #0369a1;
+            --primary-deep: #0c4a6e;
+            --secondary: #0f766e;
+            --warm: #b45309;
+            --soft-blue: #e8f3fb;
+            --soft-mint: #e7f7f3;
+            --soft-amber: #fff2de;
+            --shadow: 0 20px 44px rgba(30, 58, 90, 0.12);
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+            color: var(--ink);
+            line-height: 1.75;
+            background:
+                radial-gradient(circle at 8% 8%, rgba(3, 105, 161, 0.18), transparent 26%),
+                radial-gradient(circle at 88% 12%, rgba(15, 118, 110, 0.16), transparent 24%),
+                linear-gradient(180deg, #ece7d8 0%, #f4f0e6 44%, #f5f1e9 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.25) 1px, transparent 1px);
+            background-size: 26px 26px;
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.48), transparent 75%);
+            z-index: -1;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 32px));
+            margin: 28px auto 56px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid var(--line);
+            box-shadow: 0 10px 20px rgba(30, 58, 90, 0.08);
+            transition: transform 0.22s ease;
+        }
+
+        .home-link:hover,
+        .button-link:hover,
+        .panel:hover,
+        .control-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 34px;
+            border-radius: 32px;
+            border: 1px solid rgba(71, 85, 105, 0.16);
+            background: linear-gradient(140deg, rgba(255, 253, 249, 0.92), rgba(242, 249, 255, 0.78));
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -88px;
+            top: -88px;
+            width: 290px;
+            height: 290px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(3, 105, 161, 0.18), transparent 70%);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            color: var(--primary-deep);
+            border: 1px solid rgba(3, 105, 161, 0.18);
+            background: rgba(236, 248, 255, 0.95);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .hero-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1.35fr 0.95fr;
+            gap: 26px;
+            margin-top: 18px;
+        }
+
+        h1 {
+            margin: 14px 0;
+            font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 0.98;
+            letter-spacing: -0.05em;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+            line-height: 1.15;
+        }
+
+        h3 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .hero p,
+        .section-note,
+        .clean-list {
+            color: var(--muted);
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .button-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.22s ease;
+        }
+
+        .button-link.primary {
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+            box-shadow: 0 14px 28px rgba(12, 74, 110, 0.2);
+        }
+
+        .button-link.secondary {
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid var(--line);
+        }
+
+        .stat-stack {
+            display: grid;
+            gap: 14px;
+        }
+
+        .metric {
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(71, 85, 105, 0.14);
+            box-shadow: 0 12px 24px rgba(30, 58, 90, 0.08);
+        }
+
+        .metric-title {
+            display: block;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+            font-weight: 700;
+            font-size: 1.65rem;
+            color: var(--primary-deep);
+        }
+
+        .layout {
+            display: grid;
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .panel {
+            padding: 28px;
+            border-radius: var(--radius-xl);
+            background: var(--paper);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            transition: transform 0.22s ease;
+        }
+
+        .section-head {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: end;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-kicker {
+            margin: 0 0 8px;
+            font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+            color: var(--primary-deep);
+            font-size: 0.9rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .section-note {
+            max-width: 56ch;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            background: var(--paper-strong);
+            border: 1px solid rgba(71, 85, 105, 0.12);
+        }
+
+        .card.warm {
+            background: linear-gradient(140deg, rgba(255, 242, 222, 0.94), rgba(255, 253, 250, 0.96));
+        }
+
+        .card.cool {
+            background: linear-gradient(140deg, rgba(232, 243, 251, 0.92), rgba(255, 255, 255, 0.96));
+        }
+
+        .process-step {
+            position: relative;
+            padding: 22px 20px 20px 24px;
+            border-radius: 20px;
+            border: 1px solid rgba(71, 85, 105, 0.12);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 248, 252, 0.88));
+            overflow: hidden;
+        }
+
+        .process-step::before {
+            content: attr(data-step);
+            position: absolute;
+            right: 16px;
+            top: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(12, 74, 110, 0.09);
+            line-height: 1;
+        }
+
+        .code-layout {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .code-card {
+            background: linear-gradient(160deg, #10243a, #1a3c5d 52%, #1f4d74 100%);
+            color: #eef4fb;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 18px 34px rgba(12, 25, 38, 0.22);
+            overflow: hidden;
+        }
+
+        .code-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #fb7185; }
+        .dot.yellow { background: #fbbf24; }
+        .dot.green { background: #34d399; }
+
+        .code-card pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .side-card {
+            padding: 20px;
+            border-radius: 22px;
+            border: 1px solid rgba(71, 85, 105, 0.12);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(238, 246, 252, 0.9));
+        }
+
+        .clean-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .visual-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .demo-card {
+            padding: 20px;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(235, 243, 250, 0.9));
+            border: 1px solid rgba(71, 85, 105, 0.12);
+        }
+
+        .bar-stage {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            min-height: 250px;
+            padding: 18px;
+            border-radius: 18px;
+            background:
+                linear-gradient(180deg, rgba(233, 241, 248, 0.72), rgba(255, 255, 255, 0.95)),
+                repeating-linear-gradient(180deg, rgba(71, 85, 105, 0.08) 0 1px, transparent 1px 40px);
+            border: 1px solid rgba(71, 85, 105, 0.14);
+        }
+
+        .bar-column {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 18px 18px 10px 10px;
+            background: linear-gradient(180deg, #7dd3fc, #0284c7);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-weight: 700;
+            display: flex;
+            align-items: start;
+            justify-content: center;
+            padding-top: 10px;
+            transition: height 0.35s ease, transform 0.35s ease, background 0.35s ease;
+        }
+
+        .bar.active {
+            background: linear-gradient(180deg, #f59e0b, #b45309);
+            transform: translateY(-6px);
+        }
+
+        .bar.candidate {
+            background: linear-gradient(180deg, #fb7185, #be123c);
+            transform: translateY(-4px);
+        }
+
+        .bar.sorted {
+            background: linear-gradient(180deg, #34d399, #0f766e);
+        }
+
+        .bar-label {
+            font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+            font-weight: 700;
+            color: var(--primary-deep);
+        }
+
+        .demo-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .control-button {
+            border: none;
+            border-radius: 999px;
+            padding: 11px 16px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.22s ease;
+        }
+
+        .control-button.primary {
+            color: #fff;
+            background: linear-gradient(135deg, var(--secondary), #115e59);
+            box-shadow: 0 12px 22px rgba(15, 118, 110, 0.2);
+        }
+
+        .control-button.secondary {
+            color: var(--ink);
+            background: #fff;
+            border: 1px solid var(--line);
+        }
+
+        .status-box {
+            padding: 18px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(232, 243, 251, 0.84), rgba(255, 255, 255, 0.96));
+            border: 1px solid rgba(3, 105, 161, 0.15);
+        }
+
+        .status-box p {
+            margin: 0 0 10px;
+        }
+
+        .status-box strong {
+            color: var(--primary-deep);
+        }
+
+        .step-counter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 74px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(71, 85, 105, 0.14);
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+            font-weight: 700;
+        }
+
+        .compare-table {
+            width: 100%;
+            margin-top: 18px;
+            border-collapse: collapse;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(71, 85, 105, 0.15);
+            background: rgba(255, 255, 255, 0.88);
+        }
+
+        .compare-table th,
+        .compare-table td {
+            text-align: left;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.1);
+        }
+
+        .compare-table th {
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary-deep), var(--primary));
+            font-weight: 700;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .pill.good {
+            color: #0f766e;
+            background: rgba(16, 185, 129, 0.12);
+        }
+
+        .pill.bad {
+            color: #b91c1c;
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero,
+        .panel {
+            animation: riseIn 0.65s ease both;
+        }
+
+        .panel:nth-of-type(2) { animation-delay: 0.06s; }
+        .panel:nth-of-type(3) { animation-delay: 0.12s; }
+        .panel:nth-of-type(4) { animation-delay: 0.18s; }
+        .panel:nth-of-type(5) { animation-delay: 0.24s; }
+
+        @media (max-width: 980px) {
+            .hero-grid,
+            .grid-2,
+            .code-layout,
+            .visual-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page {
+                width: min(100% - 20px, 1180px);
+                margin-top: 10px;
+            }
+
+            .top-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .home-link,
+            .button-link,
+            .control-button {
+                width: 100%;
+            }
+
+            .hero,
+            .panel {
+                padding: 22px;
+                border-radius: 24px;
+            }
+
+            h1 {
+                font-size: 2.4rem;
+            }
+
+            .bar-stage {
+                min-height: 220px;
+                gap: 8px;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <div class="top-nav">
+            <a class="home-link" href="index.html">← 返回程式教學首頁</a>
+        </div>
+
+        <section class="hero">
+            <span class="eyebrow">Sorting Basics • Selection Sort</span>
+            <div class="hero-grid">
+                <div>
+                    <h1>選擇排序是什麼？</h1>
+                    <p>
+                        選擇排序的核心想法是「每一輪都找最小值」，然後放到前面該在的位置。
+                        它的交換次數通常比氣泡排序少，流程也很規律，適合拿來理解「搜尋最值 + 固定位置」這種排序策略。
+                    </p>
+                    <div class="hero-actions">
+                        <a class="button-link primary" href="#demo">直接看排序示範</a>
+                        <a class="button-link secondary" href="bubble_sort.html">比較氣泡排序</a>
+                    </div>
+                </div>
+                <div class="stat-stack">
+                    <div class="metric">
+                        <span class="metric-title">最佳 / 平均 / 最壞時間</span>
+                        <span class="metric-value">O(n²)</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-title">空間複雜度</span>
+                        <span class="metric-value">O(1)</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-title">關鍵特性</span>
+                        <span class="metric-value">原地排序、通常不穩定</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-title">學習重點</span>
+                        <span class="metric-value">最小值搜尋與區間縮小</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="layout">
+            <section class="panel" id="overview">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Overview</p>
+                        <h2>一句話掌握選擇排序</h2>
+                    </div>
+                    <p class="section-note">每一輪從未排序區間找出最小值，放到區間最前面，已排序區間就會持續向右擴大。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card warm">
+                        <h3>核心想法</h3>
+                        <p>把陣列切成「已排序」和「未排序」兩區，每輪都在未排序區間找到最小值，並與區間起點交換。</p>
+                    </article>
+                    <article class="card cool">
+                        <h3>它的節奏</h3>
+                        <p>第 1 輪固定第 1 個位置、第 2 輪固定第 2 個位置，直到倒數第 2 個位置固定後就完成排序。</p>
+                    </article>
+                    <article class="card">
+                        <h3>和氣泡排序差異</h3>
+                        <p>氣泡排序是靠相鄰交換慢慢推動，選擇排序是先找最小值再一次交換，交換次數通常更少。</p>
+                    </article>
+                    <article class="card">
+                        <h3>實務定位</h3>
+                        <p>雖然時間複雜度仍是 O(n²)，但邏輯清楚、記憶體需求低，常用於教學或小規模資料處理。</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel" id="process">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">How It Works</p>
+                        <h2>選擇排序運作流程</h2>
+                    </div>
+                    <p class="section-note">你可以把它想成重複執行四步：鎖定起點、找最小值、交換、縮小範圍。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="process-step" data-step="01">
+                        <h3>鎖定本輪起點 i</h3>
+                        <p>從左到右進行，每一輪先把當前位置 i 當作候選最小值的位置。</p>
+                    </article>
+                    <article class="process-step" data-step="02">
+                        <h3>掃描右側區間</h3>
+                        <p>從 i + 1 開始往後找，若找到更小元素，就更新最小值索引 minIndex。</p>
+                    </article>
+                    <article class="process-step" data-step="03">
+                        <h3>與起點交換</h3>
+                        <p>掃描結束後，把 minIndex 和 i 交換，最小值就會固定在正確位置。</p>
+                    </article>
+                    <article class="process-step" data-step="04">
+                        <h3>已排序區間擴大</h3>
+                        <p>每完成一輪，前綴區間 [0..i] 都已經排序好，接著處理下一個位置。</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel" id="code">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Implementation</p>
+                        <h2>C 語言實作</h2>
+                    </div>
+                    <p class="section-note">這份程式碼示範典型的選擇排序：雙層迴圈、最小值追蹤、結束時再交換一次。</p>
+                </div>
+                <div class="code-layout">
+                    <article class="code-card">
+                        <div class="code-toolbar">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+<pre>#include &lt;stdio.h&gt;
+
+void selectionSort(int arr[], int n) {
+    for (int i = 0; i &lt; n - 1; i++) {
+        int minIndex = i;
+
+        for (int j = i + 1; j &lt; n; j++) {
+            if (arr[j] &lt; arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+
+        if (minIndex != i) {
+            int temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
+        }
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i &lt; n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int arr[] = {29, 10, 14, 37, 13};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("排序前: ");
+    printArray(arr, n);
+
+    selectionSort(arr, n);
+
+    printf("排序後: ");
+    printArray(arr, n);
+
+    return 0;
+}</pre>
+                    </article>
+                    <aside class="side-card">
+                        <h3>讀程式時先看這三點</h3>
+                        <ol class="clean-list">
+                            <li>外層迴圈的 i 代表「這一輪要固定哪個位置」。</li>
+                            <li>minIndex 會隨著內層比較持續更新，最後停在最小值位置。</li>
+                            <li>交換在每輪最後發生一次，所以交換次數上限是 n - 1。</li>
+                        </ol>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="demo">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Visual Demo</p>
+                        <h2>互動式排序示範</h2>
+                    </div>
+                    <p class="section-note">示範資料為 [7, 3, 5, 2, 9]。橘色是目前比較值、紅色是目前找到的最小值、綠色是已排序區間。</p>
+                </div>
+                <div class="visual-grid">
+                    <article class="demo-card">
+                        <div class="bar-stage" id="barStage" aria-label="Selection Sort 視覺化長條圖"></div>
+                        <div class="demo-controls">
+                            <button class="control-button secondary" id="prevButton" type="button">上一步</button>
+                            <button class="control-button primary" id="playButton" type="button">自動播放</button>
+                            <button class="control-button secondary" id="nextButton" type="button">下一步</button>
+                            <button class="control-button secondary" id="resetButton" type="button">重新開始</button>
+                        </div>
+                    </article>
+                    <aside class="status-box">
+                        <p><strong>目前狀態</strong></p>
+                        <p id="stepDescription">按下「下一步」或「自動播放」，看選擇排序如何一輪輪把最小值放到前面。</p>
+                        <p><span class="step-counter" id="stepCounter">0 / 0</span></p>
+                        <p id="passInfo">第 0 輪，尚未開始。</p>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="panel" id="comparison">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Comparison</p>
+                        <h2>與氣泡排序的重點比較</h2>
+                    </div>
+                    <p class="section-note">兩者都屬於 O(n²) 的基礎排序，但行為特性不同，學習時一起對照最清楚。</p>
+                </div>
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>面向</th>
+                            <th>選擇排序</th>
+                            <th>氣泡排序</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>核心動作</td>
+                            <td>找最小值後交換到前面</td>
+                            <td>比較相鄰元素並交換</td>
+                        </tr>
+                        <tr>
+                            <td>交換次數</td>
+                            <td>較少，最多 n - 1 次</td>
+                            <td>可能很多次</td>
+                        </tr>
+                        <tr>
+                            <td>最佳時間</td>
+                            <td>O(n²)</td>
+                            <td>O(n)（有提前停止時）</td>
+                        </tr>
+                        <tr>
+                            <td>穩定性</td>
+                            <td><span class="pill bad">通常不穩定</span></td>
+                            <td><span class="pill good">穩定</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="footer-note">建議先學氣泡排序理解交換，再學選擇排序理解「每輪固定一格」策略，兩者搭配最有感。</p>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const initialArray = [7, 3, 5, 2, 9];
+        const barStage = document.getElementById('barStage');
+        const stepDescription = document.getElementById('stepDescription');
+        const stepCounter = document.getElementById('stepCounter');
+        const passInfo = document.getElementById('passInfo');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const resetButton = document.getElementById('resetButton');
+        const playButton = document.getElementById('playButton');
+
+        function buildSelectionSteps(values) {
+            const arr = [...values];
+            const steps = [
+                {
+                    array: [...arr],
+                    active: [],
+                    candidate: -1,
+                    sortedCount: 0,
+                    pass: 0,
+                    description: '初始狀態：陣列尚未開始排序。'
+                }
+            ];
+
+            for (let i = 0; i < arr.length - 1; i++) {
+                let minIndex = i;
+
+                steps.push({
+                    array: [...arr],
+                    active: [i],
+                    candidate: minIndex,
+                    sortedCount: i,
+                    pass: i + 1,
+                    description: `第 ${i + 1} 輪開始：先把位置 ${i + 1} 的值 ${arr[i]} 當作目前最小值。`
+                });
+
+                for (let j = i + 1; j < arr.length; j++) {
+                    steps.push({
+                        array: [...arr],
+                        active: [j],
+                        candidate: minIndex,
+                        sortedCount: i,
+                        pass: i + 1,
+                        description: `比較目前最小值 ${arr[minIndex]} 與位置 ${j + 1} 的 ${arr[j]}。`
+                    });
+
+                    if (arr[j] < arr[minIndex]) {
+                        minIndex = j;
+                        steps.push({
+                            array: [...arr],
+                            active: [j],
+                            candidate: minIndex,
+                            sortedCount: i,
+                            pass: i + 1,
+                            description: `發現更小值 ${arr[j]}，更新本輪最小值索引為位置 ${j + 1}。`
+                        });
+                    }
+                }
+
+                if (minIndex !== i) {
+                    const oldLeft = arr[i];
+                    const oldMin = arr[minIndex];
+                    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+
+                    steps.push({
+                        array: [...arr],
+                        active: [i, minIndex],
+                        candidate: i,
+                        sortedCount: i + 1,
+                        pass: i + 1,
+                        description: `本輪交換：把最小值 ${oldMin} 放到位置 ${i + 1}，${oldLeft} 移到位置 ${minIndex + 1}。`
+                    });
+                } else {
+                    steps.push({
+                        array: [...arr],
+                        active: [i],
+                        candidate: i,
+                        sortedCount: i + 1,
+                        pass: i + 1,
+                        description: `位置 ${i + 1} 已是最小值，不需要交換。`
+                    });
+                }
+            }
+
+            steps.push({
+                array: [...arr],
+                active: [],
+                candidate: -1,
+                sortedCount: arr.length,
+                pass: arr.length - 1,
+                description: '排序完成：所有元素都已依照由小到大排列。'
+            });
+
+            return steps;
+        }
+
+        const steps = buildSelectionSteps(initialArray);
+        let currentStep = 0;
+        let autoplayId = null;
+
+        function renderStep(index) {
+            const step = steps[index];
+            const max = Math.max(...step.array);
+
+            barStage.innerHTML = '';
+
+            step.array.forEach((value, valueIndex) => {
+                const column = document.createElement('div');
+                column.className = 'bar-column';
+
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${(value / max) * 180 + 36}px`;
+                bar.textContent = value;
+
+                if (valueIndex < step.sortedCount) {
+                    bar.classList.add('sorted');
+                }
+
+                if (valueIndex === step.candidate) {
+                    bar.classList.add('candidate');
+                }
+
+                if (step.active.includes(valueIndex)) {
+                    bar.classList.add('active');
+                }
+
+                const label = document.createElement('div');
+                label.className = 'bar-label';
+                label.textContent = `位置 ${valueIndex + 1}`;
+
+                column.appendChild(bar);
+                column.appendChild(label);
+                barStage.appendChild(column);
+            });
+
+            stepDescription.textContent = step.description;
+            stepCounter.textContent = `${index} / ${steps.length - 1}`;
+            passInfo.textContent = step.pass === 0
+                ? '第 0 輪，尚未開始。'
+                : `第 ${step.pass} 輪進行中。`;
+
+            prevButton.disabled = index === 0;
+            nextButton.disabled = index === steps.length - 1;
+            playButton.textContent = autoplayId ? '停止播放' : '自動播放';
+        }
+
+        function stopAutoplay() {
+            if (autoplayId) {
+                window.clearInterval(autoplayId);
+                autoplayId = null;
+                renderStep(currentStep);
+            }
+        }
+
+        prevButton.addEventListener('click', () => {
+            stopAutoplay();
+            currentStep = Math.max(0, currentStep - 1);
+            renderStep(currentStep);
+        });
+
+        nextButton.addEventListener('click', () => {
+            stopAutoplay();
+            currentStep = Math.min(steps.length - 1, currentStep + 1);
+            renderStep(currentStep);
+        });
+
+        resetButton.addEventListener('click', () => {
+            stopAutoplay();
+            currentStep = 0;
+            renderStep(currentStep);
+        });
+
+        playButton.addEventListener('click', () => {
+            if (autoplayId) {
+                stopAutoplay();
+                return;
+            }
+
+            autoplayId = window.setInterval(() => {
+                if (currentStep >= steps.length - 1) {
+                    stopAutoplay();
+                    return;
+                }
+
+                currentStep += 1;
+                renderStep(currentStep);
+            }, 1200);
+
+            renderStep(currentStep);
+        });
+
+        renderStep(currentStep);
+    </script>
+</body>
+</html>
