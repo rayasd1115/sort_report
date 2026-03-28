@@ -93,6 +93,33 @@
             transform: translateY(-2px);
         }
 
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--line);
+            box-shadow: 0 8px 16px rgba(92, 72, 36, 0.08);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .quick-link:hover {
+            transform: translateY(-2px);
+        }
+
         .hero {
             position: relative;
             overflow: hidden;
@@ -658,7 +685,12 @@
                 align-items: stretch;
             }
 
-            .home-link {
+            .home-link,
+            .quick-link {
+                width: 100%;
+            }
+
+            .quick-links {
                 width: 100%;
             }
 
@@ -693,6 +725,10 @@
     <main class="page">
         <div class="top-nav">
             <a class="home-link" href="index.html">← 返回程式教學首頁</a>
+            <div class="quick-links" aria-label="快速導覽">
+                <a class="quick-link" href="selection_sort.html">選擇排序</a>
+                <a class="quick-link" href="insertion_sort.html">插入排序</a>
+            </div>
         </div>
         <section class="hero">
             <span class="eyebrow">Sorting Basics • Bubble Sort</span>

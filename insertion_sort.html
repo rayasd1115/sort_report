@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>選擇排序是什麼｜Selection Sort 視覺化介紹</title>
+    <title>插入排序是什麼｜Insertion Sort 視覺化介紹</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap');
 
@@ -640,18 +640,18 @@
             <a class="home-link" href="index.html">← 返回程式教學首頁</a>
             <div class="quick-links" aria-label="快速導覽">
                 <a class="quick-link" href="bubble_sort.html">氣泡排序</a>
-                <a class="quick-link" href="insertion_sort.html">插入排序</a>
+                <a class="quick-link" href="selection_sort.html">選擇排序</a>
             </div>
         </div>
 
         <section class="hero">
-            <span class="eyebrow">Sorting Basics • Selection Sort</span>
+            <span class="eyebrow">Sorting Basics • Insertion Sort</span>
             <div class="hero-grid">
                 <div>
-                    <h1>選擇排序是什麼？</h1>
+                    <h1>插入排序是什麼？</h1>
                     <p>
-                        選擇排序的核心想法是「每一輪都找最小值」，然後放到前面該在的位置。
-                        它的交換次數通常比氣泡排序少，流程也很規律，適合拿來理解「搜尋最值 + 固定位置」這種排序策略。
+                        插入排序的核心想法是把資料想成「左邊已排序、右邊未排序」。
+                        每一輪拿出一個新元素，往左比較並插入正確位置，特別適合幾乎已經排好序的資料。
                     </p>
                     <div class="hero-actions">
                         <a class="button-link primary" href="#demo">直接看排序示範</a>
@@ -669,11 +669,11 @@
                     </div>
                     <div class="metric">
                         <span class="metric-title">關鍵特性</span>
-                        <span class="metric-value">原地排序、通常不穩定</span>
+                        <span class="metric-value">原地排序、穩定排序</span>
                     </div>
                     <div class="metric">
                         <span class="metric-title">學習重點</span>
-                        <span class="metric-value">最小值搜尋與區間縮小</span>
+                        <span class="metric-value">插入與位移策略</span>
                     </div>
                 </div>
             </div>
@@ -684,26 +684,26 @@
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">Overview</p>
-                        <h2>一句話掌握選擇排序</h2>
+                        <h2>一句話掌握插入排序</h2>
                     </div>
-                    <p class="section-note">每一輪從未排序區間找出最小值，放到區間最前面，已排序區間就會持續向右擴大。</p>
+                    <p class="section-note">每一輪都把下一個元素插進左側已排序區間，讓已排序範圍逐步擴大。</p>
                 </div>
                 <div class="grid-2">
                     <article class="card warm">
                         <h3>核心想法</h3>
-                        <p>把陣列切成「已排序」和「未排序」兩區，每輪都在未排序區間找到最小值，並與區間起點交換。</p>
+                        <p>把當前元素當作 key，從左側往回比，遇到比 key 大的元素就往右移，最後把 key 插入空出的位置。</p>
                     </article>
                     <article class="card cool">
                         <h3>它的節奏</h3>
-                        <p>第 1 輪固定第 1 個位置、第 2 輪固定第 2 個位置，直到倒數第 2 個位置固定後就完成排序。</p>
+                        <p>第 1 輪讓前 2 個元素有序，第 2 輪讓前 3 個元素有序，直到整個前綴區間擴張到全陣列。</p>
                     </article>
                     <article class="card">
                         <h3>和氣泡排序差異</h3>
-                        <p>氣泡排序是靠相鄰交換慢慢推動，選擇排序是先找最小值再一次交換，交換次數通常更少。</p>
+                        <p>氣泡排序靠相鄰交換推動，插入排序則把元素直接插入定位，對近乎有序資料通常更有效率。</p>
                     </article>
                     <article class="card">
                         <h3>實務定位</h3>
-                        <p>雖然時間複雜度仍是 O(n²)，但邏輯清楚、記憶體需求低，常用於教學或小規模資料處理。</p>
+                        <p>平均仍是 O(n²)，但程式簡潔、空間 O(1)，常作為混合排序中的小區段優化策略。</p>
                     </article>
                 </div>
             </section>
@@ -712,26 +712,26 @@
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">How It Works</p>
-                        <h2>選擇排序運作流程</h2>
+                        <h2>插入排序運作流程</h2>
                     </div>
-                    <p class="section-note">你可以把它想成重複執行四步：鎖定起點、找最小值、交換、縮小範圍。</p>
+                    <p class="section-note">你可以把它想成重複四步：取 key、向左比較、右移元素、插入 key。</p>
                 </div>
                 <div class="grid-2">
                     <article class="process-step" data-step="01">
-                        <h3>鎖定本輪起點 i</h3>
-                        <p>從左到右進行，每一輪先把當前位置 i 當作候選最小值的位置。</p>
+                        <h3>選出本輪 key</h3>
+                        <p>從第 2 個元素開始，將 arr[i] 存成 key，準備插入左側已排序區間。</p>
                     </article>
                     <article class="process-step" data-step="02">
-                        <h3>掃描右側區間</h3>
-                        <p>從 i + 1 開始往後找，若找到更小元素，就更新最小值索引 minIndex。</p>
+                        <h3>往左逐一比較</h3>
+                        <p>用 j = i - 1 往左掃描，只要 arr[j] 比 key 大，就把 arr[j] 右移到 arr[j + 1]。</p>
                     </article>
                     <article class="process-step" data-step="03">
-                        <h3>與起點交換</h3>
-                        <p>掃描結束後，把 minIndex 和 i 交換，最小值就會固定在正確位置。</p>
+                        <h3>找到插入點</h3>
+                        <p>當 j 越界或遇到 arr[j] <= key 時停止，這時 j + 1 就是 key 應該放的位置。</p>
                     </article>
                     <article class="process-step" data-step="04">
-                        <h3>已排序區間擴大</h3>
-                        <p>每完成一輪，前綴區間 [0..i] 都已經排序好，接著處理下一個位置。</p>
+                        <h3>插入後擴大前綴</h3>
+                        <p>把 key 放進 arr[j + 1]，此時前綴 [0..i] 已排序，進入下一輪。</p>
                     </article>
                 </div>
             </section>
@@ -742,7 +742,7 @@
                         <p class="section-kicker">Implementation</p>
                         <h2>C 語言實作</h2>
                     </div>
-                    <p class="section-note">這份程式碼示範典型的選擇排序：雙層迴圈、最小值追蹤、結束時再交換一次。</p>
+                    <p class="section-note">這份程式碼示範典型的插入排序：以 key 為核心，使用位移取代多次交換。</p>
                 </div>
                 <div class="code-layout">
                     <article class="code-card">
@@ -753,21 +753,17 @@
                         </div>
 <pre>#include &lt;stdio.h&gt;
 
-void selectionSort(int arr[], int n) {
-    for (int i = 0; i &lt; n - 1; i++) {
-        int minIndex = i;
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i &lt; n; i++) {
+        int key = arr[i];
+        int j = i - 1;
 
-        for (int j = i + 1; j &lt; n; j++) {
-            if (arr[j] &lt; arr[minIndex]) {
-                minIndex = j;
-            }
+        while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+            arr[j + 1] = arr[j];
+            j--;
         }
 
-        if (minIndex != i) {
-            int temp = arr[i];
-            arr[i] = arr[minIndex];
-            arr[minIndex] = temp;
-        }
+        arr[j + 1] = key;
     }
 }
 
@@ -779,13 +775,13 @@ void printArray(int arr[], int n) {
 }
 
 int main(void) {
-    int arr[] = {29, 10, 14, 37, 13};
+    int arr[] = {8, 4, 6, 3, 7};
     int n = sizeof(arr) / sizeof(arr[0]);
 
     printf("排序前: ");
     printArray(arr, n);
 
-    selectionSort(arr, n);
+    insertionSort(arr, n);
 
     printf("排序後: ");
     printArray(arr, n);
@@ -796,9 +792,9 @@ int main(void) {
                     <aside class="side-card">
                         <h3>讀程式時先看這三點</h3>
                         <ol class="clean-list">
-                            <li>外層迴圈的 i 代表「這一輪要固定哪個位置」。</li>
-                            <li>minIndex 會隨著內層比較持續更新，最後停在最小值位置。</li>
-                            <li>交換在每輪最後發生一次，所以交換次數上限是 n - 1。</li>
+                            <li>外層迴圈 i 代表「把第 i 個元素插進左側已排序區」。</li>
+                            <li>while 迴圈負責將比 key 大的元素向右位移，直到找到插入點。</li>
+                            <li>最後把 key 放回 arr[j + 1]，就完成一輪插入。</li>
                         </ol>
                     </aside>
                 </div>
@@ -810,11 +806,11 @@ int main(void) {
                         <p class="section-kicker">Visual Demo</p>
                         <h2>互動式排序示範</h2>
                     </div>
-                    <p class="section-note">示範資料為 [7, 3, 5, 2, 9]。橘色是目前比較值、紅色是目前找到的最小值、綠色是已排序區間。</p>
+                    <p class="section-note">示範資料為 [8, 4, 6, 3, 7]。橘色是本輪 key，紅色是正在比較的位置，綠色是已排序區間。</p>
                 </div>
                 <div class="visual-grid">
                     <article class="demo-card">
-                        <div class="bar-stage" id="barStage" aria-label="Selection Sort 視覺化長條圖"></div>
+                        <div class="bar-stage" id="barStage" aria-label="Insertion Sort 視覺化長條圖"></div>
                         <div class="demo-controls">
                             <button class="control-button secondary" id="prevButton" type="button">上一步</button>
                             <button class="control-button primary" id="playButton" type="button">自動播放</button>
@@ -824,7 +820,7 @@ int main(void) {
                     </article>
                     <aside class="status-box">
                         <p><strong>目前狀態</strong></p>
-                        <p id="stepDescription">按下「下一步」或「自動播放」，看選擇排序如何一輪輪把最小值放到前面。</p>
+                        <p id="stepDescription">按下「下一步」或「自動播放」，看插入排序如何把 key 插進左側有序區間。</p>
                         <p><span class="step-counter" id="stepCounter">0 / 0</span></p>
                         <p id="passInfo">第 0 輪，尚未開始。</p>
                     </aside>
@@ -843,40 +839,40 @@ int main(void) {
                     <thead>
                         <tr>
                             <th>面向</th>
-                            <th>選擇排序</th>
+                            <th>插入排序</th>
                             <th>氣泡排序</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>核心動作</td>
-                            <td>找最小值後交換到前面</td>
+                            <td>把 key 插入左側已排序區間</td>
                             <td>比較相鄰元素並交換</td>
                         </tr>
                         <tr>
-                            <td>交換次數</td>
-                            <td>較少，最多 n - 1 次</td>
-                            <td>可能很多次</td>
+                            <td>近乎有序資料</td>
+                            <td>通常很快，接近線性</td>
+                            <td>可透過提前停止改善</td>
                         </tr>
                         <tr>
                             <td>最佳時間</td>
-                            <td>O(n²)</td>
+                            <td>O(n)</td>
                             <td>O(n)（有提前停止時）</td>
                         </tr>
                         <tr>
                             <td>穩定性</td>
-                            <td><span class="pill bad">通常不穩定</span></td>
+                            <td><span class="pill good">穩定</span></td>
                             <td><span class="pill good">穩定</span></td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="footer-note">建議先學氣泡排序理解交換，再學選擇排序理解「每輪固定一格」策略，兩者搭配最有感。</p>
+                <p class="footer-note">建議先學氣泡排序理解交換，再學插入排序理解「位移 + 插入」策略，對照後會更容易記住差異。</p>
             </section>
         </div>
     </main>
 
     <script>
-        const initialArray = [7, 3, 5, 2, 9];
+        const initialArray = [8, 4, 6, 3, 7];
         const barStage = document.getElementById('barStage');
         const stepDescription = document.getElementById('stepDescription');
         const stepCounter = document.getElementById('stepCounter');
@@ -886,7 +882,7 @@ int main(void) {
         const resetButton = document.getElementById('resetButton');
         const playButton = document.getElementById('playButton');
 
-        function buildSelectionSteps(values) {
+        function buildInsertionSteps(values) {
             const arr = [...values];
             const steps = [
                 {
@@ -899,64 +895,64 @@ int main(void) {
                 }
             ];
 
-            for (let i = 0; i < arr.length - 1; i++) {
-                let minIndex = i;
+            for (let i = 1; i < arr.length; i++) {
+                const key = arr[i];
+                let j = i - 1;
 
                 steps.push({
                     array: [...arr],
                     active: [i],
-                    candidate: minIndex,
+                    candidate: i,
                     sortedCount: i,
-                    pass: i + 1,
-                    description: `第 ${i + 1} 輪開始：先把位置 ${i + 1} 的值 ${arr[i]} 當作目前最小值。`
+                    pass: i,
+                    description: `第 ${i} 輪開始：取出位置 ${i + 1} 的值 ${key} 作為 key。`
                 });
 
-                for (let j = i + 1; j < arr.length; j++) {
+                while (j >= 0) {
                     steps.push({
                         array: [...arr],
                         active: [j],
-                        candidate: minIndex,
+                        candidate: j + 1,
                         sortedCount: i,
-                        pass: i + 1,
-                        description: `比較目前最小值 ${arr[minIndex]} 與位置 ${j + 1} 的 ${arr[j]}。`
+                        pass: i,
+                        description: `比較 key ${key} 與位置 ${j + 1} 的 ${arr[j]}。`
                     });
 
-                    if (arr[j] < arr[minIndex]) {
-                        minIndex = j;
+                    if (arr[j] > key) {
+                        arr[j + 1] = arr[j];
                         steps.push({
                             array: [...arr],
-                            active: [j],
-                            candidate: minIndex,
+                            active: [j, j + 1],
+                            candidate: j,
                             sortedCount: i,
-                            pass: i + 1,
-                            description: `發現更小值 ${arr[j]}，更新本輪最小值索引為位置 ${j + 1}。`
+                            pass: i,
+                            description: `${arr[j + 1]} 比 key 大，向右位移到位置 ${j + 2}。`
                         });
+                        j -= 1;
+                        continue;
                     }
-                }
-
-                if (minIndex !== i) {
-                    const oldLeft = arr[i];
-                    const oldMin = arr[minIndex];
-                    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
 
                     steps.push({
                         array: [...arr],
-                        active: [i, minIndex],
-                        candidate: i,
-                        sortedCount: i + 1,
-                        pass: i + 1,
-                        description: `本輪交換：把最小值 ${oldMin} 放到位置 ${i + 1}，${oldLeft} 移到位置 ${minIndex + 1}。`
+                        active: [j],
+                        candidate: j + 1,
+                        sortedCount: i,
+                        pass: i,
+                        description: `遇到 ${arr[j]} <= ${key}，停止位移，準備插入 key。`
                     });
-                } else {
-                    steps.push({
-                        array: [...arr],
-                        active: [i],
-                        candidate: i,
-                        sortedCount: i + 1,
-                        pass: i + 1,
-                        description: `位置 ${i + 1} 已是最小值，不需要交換。`
-                    });
+                    break;
                 }
+
+                arr[j + 1] = key;
+
+                steps.push({
+                    array: [...arr],
+                    active: [j + 1],
+                    candidate: j + 1,
+                    sortedCount: i + 1,
+                    pass: i,
+                    description: `把 key ${key} 插入位置 ${j + 2}，前 ${i + 1} 個元素已排序。`
+                });
             }
 
             steps.push({
@@ -971,7 +967,7 @@ int main(void) {
             return steps;
         }
 
-        const steps = buildSelectionSteps(initialArray);
+        const steps = buildInsertionSteps(initialArray);
         let currentStep = 0;
         let autoplayId = null;
 
