@@ -641,6 +641,8 @@
             <div class="quick-links" aria-label="快速導覽">
                 <a class="quick-link" href="bubble_sort.html">氣泡排序</a>
                 <a class="quick-link" href="selection_sort.html">選擇排序</a>
+                <a class="quick-link" href="insertion_sort.html">插入排序</a>
+                <a class="quick-link" href="merge_sort.html">合併排序</a>
             </div>
         </div>
 
@@ -827,46 +829,147 @@ int main(void) {
                 </div>
             </section>
 
+            <section class="panel" id="complexity">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Complexity</p>
+                        <h2>時間與空間複雜度分析</h2>
+                    </div>
+                    <p class="section-note">插入排序對近乎有序資料表現很好，但最壞情況仍然是平方級。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card warm">
+                        <h3>最佳情況</h3>
+                        <p>如果資料幾乎已排序，內層 while 幾乎不用位移，時間複雜度可以接近 O(n)。</p>
+                    </article>
+                    <article class="card cool">
+                        <h3>平均 / 最壞情況</h3>
+                        <p>當資料亂序時，需要反覆位移元素，因此平均與最壞情況通常都是 O(n²)。</p>
+                    </article>
+                    <article class="card">
+                        <h3>空間複雜度</h3>
+                        <p>只使用少量暫存變數 key 和 j，屬於原地排序，空間複雜度是 O(1)。</p>
+                    </article>
+                    <article class="card">
+                        <h3>特性總結</h3>
+                        <p>插入排序穩定、程式簡潔，適合小型資料與近乎有序的資料處理。</p>
+                    </article>
+                </div>
+            </section>
+
             <section class="panel" id="comparison">
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">Comparison</p>
-                        <h2>與氣泡排序的重點比較</h2>
+                        <h2>優缺點與其他排序比較</h2>
                     </div>
-                    <p class="section-note">兩者都屬於 O(n²) 的基礎排序，但行為特性不同，學習時一起對照最清楚。</p>
+                    <p class="section-note">先看插入排序本身的優缺點，再把它放進 Bubble、Selection 與 Merge Sort 的家族裡一起比較。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card warm">
+                        <h3>優點</h3>
+                        <ul class="clean-list">
+                            <li>對近乎有序的資料特別快，最佳情況可以接近 O(n)。</li>
+                            <li>屬於穩定排序，能保留相同值的相對順序。</li>
+                            <li>只需要很少額外空間，程式也容易理解。</li>
+                        </ul>
+                    </article>
+                    <article class="card cool">
+                        <h3>缺點</h3>
+                        <ul class="clean-list">
+                            <li>平均與最壞情況仍然是 O(n²)，資料越亂效能越差。</li>
+                            <li>需要反覆位移元素，當陣列很大時成本會增加。</li>
+                            <li>面對大型資料集時，通常不如 Merge Sort 或 Quick Sort 實用。</li>
+                        </ul>
+                    </article>
                 </div>
                 <table class="compare-table">
                     <thead>
                         <tr>
-                            <th>面向</th>
-                            <th>插入排序</th>
-                            <th>氣泡排序</th>
+                            <th>演算法</th>
+                            <th>最佳</th>
+                            <th>平均</th>
+                            <th>最壞</th>
+                            <th>空間</th>
+                            <th>穩定性</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>核心動作</td>
-                            <td>把 key 插入左側已排序區間</td>
-                            <td>比較相鄰元素並交換</td>
-                        </tr>
-                        <tr>
-                            <td>近乎有序資料</td>
-                            <td>通常很快，接近線性</td>
-                            <td>可透過提前停止改善</td>
-                        </tr>
-                        <tr>
-                            <td>最佳時間</td>
+                            <td>氣泡排序</td>
                             <td>O(n)</td>
-                            <td>O(n)（有提前停止時）</td>
+                            <td>O(n²)</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                            <td>穩定</td>
                         </tr>
                         <tr>
-                            <td>穩定性</td>
-                            <td><span class="pill good">穩定</span></td>
-                            <td><span class="pill good">穩定</span></td>
+                            <td>選擇排序</td>
+                            <td>O(n²)</td>
+                            <td>O(n²)</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                            <td>不穩定</td>
+                        </tr>
+                        <tr>
+                            <td>插入排序</td>
+                            <td>O(n)</td>
+                            <td>O(n²)</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                            <td>穩定</td>
+                        </tr>
+                        <tr>
+                            <td>合併排序</td>
+                            <td>O(n log n)</td>
+                            <td>O(n log n)</td>
+                            <td>O(n log n)</td>
+                            <td>O(n)</td>
+                            <td>穩定</td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="footer-note">建議先學氣泡排序理解交換，再學插入排序理解「位移 + 插入」策略，對照後會更容易記住差異。</p>
+                <p class="footer-note">插入排序很適合和氣泡排序一起學，因為一個是「交換」，一個是「位移 + 插入」，差異會很清楚。</p>
+            </section>
+
+            <section class="panel" id="usage">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">When To Use</p>
+                        <h2>什麼情況適合使用插入排序？</h2>
+                    </div>
+                    <p class="section-note">它特別適合小資料、近乎有序資料，或者需要維持穩定排序的情境。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card warm">
+                        <h3>適合</h3>
+                        <p>資料量小、資料幾乎已經排好、或是你想要一個容易理解又穩定的排序實作時。</p>
+                    </article>
+                    <article class="card cool">
+                        <h3>不適合</h3>
+                        <p>如果資料量很大、而且排列通常很亂，插入排序的 O(n²) 成本就會開始變得不划算。</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel" id="summary">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Takeaway</p>
+                        <h2>重點總結</h2>
+                    </div>
+                    <p class="section-note">插入排序的關鍵是「把元素插進正確位置」，而不是一直交換。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card">
+                        <h3>你應該記住的事</h3>
+                        <p>它透過位移來騰出空間，讓 key 插入到左側已排序區間中，因此對近乎有序資料很有效率。</p>
+                    </article>
+                    <article class="card soft">
+                        <h3>實際定位</h3>
+                        <p>在教學與小資料場景中非常實用，也常被拿來和氣泡排序對照理解「交換」與「位移」的差異。</p>
+                    </article>
+                </div>
             </section>
         </div>
     </main>

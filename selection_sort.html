@@ -640,7 +640,9 @@
             <a class="home-link" href="index.html">← 返回程式教學首頁</a>
             <div class="quick-links" aria-label="快速導覽">
                 <a class="quick-link" href="bubble_sort.html">氣泡排序</a>
+                <a class="quick-link" href="selection_sort.html">選擇排序</a>
                 <a class="quick-link" href="insertion_sort.html">插入排序</a>
+                <a class="quick-link" href="merge_sort.html">合併排序</a>
             </div>
         </div>
 
@@ -831,46 +833,139 @@ int main(void) {
                 </div>
             </section>
 
+            <section class="panel" id="complexity">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Complexity</p>
+                        <h2>時間與空間複雜度分析</h2>
+                    </div>
+                    <p class="section-note">選擇排序的比較次數很固定，所以時間複雜度沒有因資料排列而明顯改善。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card warm">
+                        <h3>最佳 / 平均 / 最壞時間</h3>
+                        <p>不管資料原本有沒有排序，都要完成完整掃描，所以三種情況通常都是 O(n²)。</p>
+                    </article>
+                    <article class="card cool">
+                        <h3>空間複雜度</h3>
+                        <p>只需要少量暫存變數來做交換，因此屬於原地排序，空間複雜度是 O(1)。</p>
+                    </article>
+                </div>
+            </section>
+
             <section class="panel" id="comparison">
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">Comparison</p>
-                        <h2>與氣泡排序的重點比較</h2>
+                        <h2>優缺點與其他排序比較</h2>
                     </div>
-                    <p class="section-note">兩者都屬於 O(n²) 的基礎排序，但行為特性不同，學習時一起對照最清楚。</p>
+                    <p class="section-note">先看選擇排序本身的優缺點，再把它放進 Bubble、Insertion 與 Merge Sort 的家族裡一起比較。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card warm">
+                        <h3>優點</h3>
+                        <ul class="clean-list">
+                            <li>交換次數比氣泡排序少，最多只會發生 n - 1 次交換。</li>
+                            <li>程式邏輯固定，適合用來學習「固定位置」的排序思維。</li>
+                            <li>屬於原地排序，只需要很少額外空間。</li>
+                        </ul>
+                    </article>
+                    <article class="card cool">
+                        <h3>缺點</h3>
+                        <ul class="clean-list">
+                            <li>不管資料是否接近排序，都要完整掃描，時間複雜度仍是 O(n²)。</li>
+                            <li>通常不穩定，遇到相同值時相對順序可能改變。</li>
+                            <li>比起插入排序與 Merge Sort，實務效能通常不夠好。</li>
+                        </ul>
+                    </article>
                 </div>
                 <table class="compare-table">
                     <thead>
                         <tr>
-                            <th>面向</th>
-                            <th>選擇排序</th>
-                            <th>氣泡排序</th>
+                            <th>演算法</th>
+                            <th>最佳</th>
+                            <th>平均</th>
+                            <th>最壞</th>
+                            <th>空間</th>
+                            <th>穩定性</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>核心動作</td>
-                            <td>找最小值後交換到前面</td>
-                            <td>比較相鄰元素並交換</td>
-                        </tr>
-                        <tr>
-                            <td>交換次數</td>
-                            <td>較少，最多 n - 1 次</td>
-                            <td>可能很多次</td>
-                        </tr>
-                        <tr>
-                            <td>最佳時間</td>
+                            <td>氣泡排序</td>
+                            <td>O(n)</td>
                             <td>O(n²)</td>
-                            <td>O(n)（有提前停止時）</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                            <td>穩定</td>
                         </tr>
                         <tr>
-                            <td>穩定性</td>
-                            <td><span class="pill bad">通常不穩定</span></td>
-                            <td><span class="pill good">穩定</span></td>
+                            <td>選擇排序</td>
+                            <td>O(n²)</td>
+                            <td>O(n²)</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                            <td>不穩定</td>
+                        </tr>
+                        <tr>
+                            <td>插入排序</td>
+                            <td>O(n)</td>
+                            <td>O(n²)</td>
+                            <td>O(n²)</td>
+                            <td>O(1)</td>
+                            <td>穩定</td>
+                        </tr>
+                        <tr>
+                            <td>合併排序</td>
+                            <td>O(n log n)</td>
+                            <td>O(n log n)</td>
+                            <td>O(n log n)</td>
+                            <td>O(n)</td>
+                            <td>穩定</td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="footer-note">建議先學氣泡排序理解交換，再學選擇排序理解「每輪固定一格」策略，兩者搭配最有感。</p>
+                <p class="footer-note">選擇排序適合拿來理解「每輪找最小值」的策略，但如果要處理大資料，通常會改用插入排序或 Merge Sort。</p>
+            </section>
+
+            <section class="panel" id="usage">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">When To Use</p>
+                        <h2>什麼情況適合使用選擇排序？</h2>
+                    </div>
+                    <p class="section-note">它不是最快的排序法，但在教學、簡單資料整理與交換成本高的情境仍有價值。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card warm">
+                        <h3>適合</h3>
+                        <p>資料量很小、你想要清楚理解排序流程、或者交換成本比比較成本更高的情境。</p>
+                    </article>
+                    <article class="card cool">
+                        <h3>不適合</h3>
+                        <p>資料量大、需要高效率處理，或是已經有更成熟的內建排序可用時，就不太適合。</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel" id="summary">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Takeaway</p>
+                        <h2>重點總結</h2>
+                    </div>
+                    <p class="section-note">選擇排序的核心，是每輪都把最小值放到正確位置，讓前綴區間逐步完成排序。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card">
+                        <h3>你應該記住的事</h3>
+                        <p>它的比較次數固定、交換次數較少、空間需求也很低，因此很適合拿來理解「固定位置」這種排序思維。</p>
+                    </article>
+                    <article class="card soft">
+                        <h3>實際定位</h3>
+                        <p>對初學者來說，它是非常好的排序入門範例；但若要處理大量資料，通常會選擇更高效率的方法。</p>
+                    </article>
+                </div>
             </section>
         </div>
     </main>
