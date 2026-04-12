@@ -2,7 +2,7 @@
 
 學號: 11428246  
 姓名: 黃敏睿  
-模擬頁面: https://github.com/rayasd1115/sort_report
+模擬頁面: https://rayasd1115.github.io/sort_report/
 
 本報告整理常見排序演算法，內容包含各方法的基本原理、時間與空間複雜度分析，以及本次網頁模擬的實作重點。
 
