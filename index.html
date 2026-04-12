@@ -26,6 +26,10 @@
 			box-sizing: border-box;
 		}
 
+		html {
+			scroll-behavior: smooth;
+		}
+
 		body {
 			margin: 0;
 			font-family: 'Noto Sans TC', sans-serif;
@@ -324,6 +328,56 @@
 			margin-top: 16px;
 		}
 
+		.back-to-top {
+			position: fixed;
+			right: 22px;
+			bottom: 22px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 48px;
+			height: 48px;
+			border-radius: 999px;
+			border: 1px solid rgba(77, 61, 41, 0.16);
+			text-decoration: none;
+			font-size: 1.2rem;
+			font-weight: 800;
+			color: #fff;
+			background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+			box-shadow: 0 14px 28px rgba(124, 45, 18, 0.26);
+			z-index: 30;
+			transition: transform 0.22s ease, box-shadow 0.22s ease;
+		}
+
+		.back-to-top:hover {
+			transform: translateY(-2px);
+		}
+
+		.scroll-down {
+			position: fixed;
+			right: 22px;
+			bottom: 78px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 48px;
+			height: 48px;
+			border-radius: 999px;
+			border: 1px solid rgba(77, 61, 41, 0.16);
+			text-decoration: none;
+			font-size: 1.2rem;
+			font-weight: 800;
+			color: #fff;
+			background: linear-gradient(135deg, var(--secondary), #0b4f49);
+			box-shadow: 0 14px 28px rgba(15, 118, 110, 0.24);
+			z-index: 30;
+			transition: transform 0.22s ease, box-shadow 0.22s ease;
+		}
+
+		.scroll-down:hover {
+			transform: translateY(-2px);
+		}
+
 		@media (max-width: 980px) {
 			.hero-grid,
 			.feature-grid,
@@ -359,15 +413,28 @@
 			.nav-link {
 				width: 100%;
 			}
+
+			.back-to-top {
+				right: 14px;
+				bottom: 14px;
+				width: 44px;
+				height: 44px;
+			}
+
+			.scroll-down {
+				right: 14px;
+				bottom: 66px;
+				width: 44px;
+				height: 44px;
+			}
 		}
 	</style>
 </head>
-<body>
+<body id="top">
 	<main class="page">
 		<section class="hero">
 			<div class="nav">
 				<div class="brand">Code Learning Hub</div>
-				<a class="nav-link" href="merge_sort.html">前往合併排序教學</a>
 			</div>
 			<div class="hero-grid">
 				<div>
@@ -382,13 +449,14 @@
 						<a class="button-link primary" href="selection_sort.html">開始學習選擇排序</a>
 						<a class="button-link primary" href="insertion_sort.html">開始學習插入排序</a>
 						<a class="button-link primary" href="merge_sort.html">開始學習合併排序</a>
+						<a class="button-link primary" href="quick_sort.html">開始學習快速排序</a>
 						<a class="button-link secondary" href="#courses">查看教學主題</a>
 					</div>
 				</div>
 				<div class="hero-panel">
 					<div class="metric">
 						<span class="metric-title">目前教學頁</span>
-						<span class="metric-value">Bubble + Selection + Insertion + Merge Sort</span>
+						<span class="metric-value">Bubble + Selection + Insertion + Merge + Quick Sort</span>
 					</div>
 					<div class="metric">
 						<span class="metric-title">學習方向</span>
@@ -464,6 +532,13 @@
 						<p>先把陣列切成小段，再把已排序子陣列逐步合併，能幫助你理解遞迴與排序整合流程。</p>
 						<a class="card-link" href="merge_sort.html">進入教學頁 →</a>
 					</article>
+					<article class="course-card">
+						<span class="card-tag">已完成</span>
+						<h3>快速排序 Quick Sort</h3>
+						<p class="course-meta">分區 + 遞迴、平均效能佳、常見高效排序法</p>
+						<p>透過選定樞紐值把資料分成左右兩側，再遞迴排序，能幫助你理解分治法的另一種策略。</p>
+						<a class="card-link" href="quick_sort.html">進入教學頁 →</a>
+					</article>
 				</div>
 			</section>
 
@@ -504,7 +579,9 @@
 			</section>
 		</div>
 
-		<p class="footer-note">從首頁可以前往 bubble_sort.html、selection_sort.html、insertion_sort.html 與 merge_sort.html，四個教學頁都能返回這個首頁。</p>
+		<p class="footer-note" id="bottom">從首頁可以前往 bubble_sort.html、selection_sort.html、insertion_sort.html、merge_sort.html 與 quick_sort.html，五個教學頁都能返回這個首頁。</p>
 	</main>
+	<a class="scroll-down" href="#bottom" aria-label="快速前往頁面底部" title="往下到底">↓</a>
+	<a class="back-to-top" href="#top" aria-label="回到頁面頂部" title="回到頂部">↑</a>
 </body>
 </html>

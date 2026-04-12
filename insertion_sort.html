@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap');
 
         :root {
-            --bg: #f2efe4;
+            --bg: #eef2f7;
             --paper: rgba(255, 253, 249, 0.9);
             --paper-strong: #fffefb;
             --ink: #1f2933;
@@ -24,6 +24,11 @@
             --shadow: 0 20px 44px rgba(30, 58, 90, 0.12);
             --radius-xl: 28px;
             --radius-lg: 20px;
+            --bg-spot-a: rgba(3, 105, 161, 0.20);
+            --bg-spot-b: rgba(14, 116, 144, 0.16);
+            --bg-grad-start: #dde7f2;
+            --bg-grad-mid: #ecf2f8;
+            --bg-grad-end: #eff3f7;
         }
 
         * {
@@ -40,9 +45,9 @@
             color: var(--ink);
             line-height: 1.75;
             background:
-                radial-gradient(circle at 8% 8%, rgba(3, 105, 161, 0.18), transparent 26%),
-                radial-gradient(circle at 88% 12%, rgba(15, 118, 110, 0.16), transparent 24%),
-                linear-gradient(180deg, #ece7d8 0%, #f4f0e6 44%, #f5f1e9 100%);
+                radial-gradient(circle at 8% 8%, var(--bg-spot-a), transparent 26%),
+                radial-gradient(circle at 88% 12%, var(--bg-spot-b), transparent 24%),
+                linear-gradient(180deg, var(--bg-grad-start) 0%, var(--bg-grad-mid) 44%, var(--bg-grad-end) 100%);
         }
 
         body::before {
@@ -464,6 +469,29 @@
             margin-top: 16px;
         }
 
+        .demo-inputs {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .number-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+        }
+
+        .input-hint {
+            margin: 0 0 12px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
         .control-button {
             border: none;
             border-radius: 999px;
@@ -564,6 +592,56 @@
             font-size: 0.95rem;
         }
 
+        .back-to-top {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            border: 1px solid rgba(71, 85, 105, 0.18);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+            box-shadow: 0 14px 28px rgba(12, 74, 110, 0.24);
+            z-index: 30;
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-2px);
+        }
+
+        .scroll-down {
+            position: fixed;
+            right: 22px;
+            bottom: 78px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            border: 1px solid rgba(71, 85, 105, 0.18);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, var(--secondary), #115e59);
+            box-shadow: 0 14px 28px rgba(15, 118, 110, 0.24);
+            z-index: 30;
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .scroll-down:hover {
+            transform: translateY(-2px);
+        }
+
         @keyframes riseIn {
             from {
                 opacity: 0;
@@ -631,10 +709,24 @@
                 gap: 8px;
                 padding: 14px;
             }
+
+            .back-to-top {
+                right: 14px;
+                bottom: 14px;
+                width: 44px;
+                height: 44px;
+            }
+
+            .scroll-down {
+                right: 14px;
+                bottom: 66px;
+                width: 44px;
+                height: 44px;
+            }
         }
     </style>
 </head>
-<body>
+<body id="top">
     <main class="page">
         <div class="top-nav">
             <a class="home-link" href="index.html">← 返回程式教學首頁</a>
@@ -643,6 +735,7 @@
                 <a class="quick-link" href="selection_sort.html">選擇排序</a>
                 <a class="quick-link" href="insertion_sort.html">插入排序</a>
                 <a class="quick-link" href="merge_sort.html">合併排序</a>
+                <a class="quick-link" href="quick_sort.html">快速排序</a>
             </div>
         </div>
 
@@ -656,8 +749,14 @@
                         每一輪拿出一個新元素，往左比較並插入正確位置，特別適合幾乎已經排好序的資料。
                     </p>
                     <div class="hero-actions">
-                        <a class="button-link primary" href="#demo">直接看排序示範</a>
-                        <a class="button-link secondary" href="bubble_sort.html">比較氣泡排序</a>
+                        <a class="button-link primary" href="#overview">排序概念總覽</a>
+                        <a class="button-link secondary" href="#process">演算法流程解析</a>
+                        <a class="button-link secondary" href="#code">C 語言程式碼實作</a>
+                        <a class="button-link secondary" href="#demo">互動排序示範</a>
+                        <a class="button-link secondary" href="#complexity">時間與空間複雜度</a>
+                        <a class="button-link secondary" href="#comparison">與其他排序比較</a>
+                        <a class="button-link secondary" href="#usage">實務適用情境</a>
+                        <a class="button-link secondary" href="#summary">重點與學習整理</a>
                     </div>
                 </div>
                 <div class="stat-stack">
@@ -808,10 +907,16 @@ int main(void) {
                         <p class="section-kicker">Visual Demo</p>
                         <h2>互動式排序示範</h2>
                     </div>
-                    <p class="section-note">示範資料為 [8, 4, 6, 3, 7]。橘色是本輪 key，紅色是正在比較的位置，綠色是已排序區間。</p>
+                    <p class="section-note">預設使用 [8, 4, 6, 3, 7]，你可以改成自己的數字或隨機產生新資料。橘色是本輪 key，紅色是正在比較的位置，綠色是已排序區間。</p>
                 </div>
                 <div class="visual-grid">
                     <article class="demo-card">
+                        <div class="demo-inputs">
+                            <input class="number-input" id="arrayInput" type="text" inputmode="numeric" placeholder="例如：8, 4, 6, 3, 7">
+                            <button class="control-button secondary" id="applyButton" type="button">套用輸入</button>
+                            <button class="control-button secondary" id="randomButton" type="button">隨機產生</button>
+                        </div>
+                        <p class="input-hint">可用逗號、空白或換行分隔數字，按 Enter 也可以套用。</p>
                         <div class="bar-stage" id="barStage" aria-label="Insertion Sort 視覺化長條圖"></div>
                         <div class="demo-controls">
                             <button class="control-button secondary" id="prevButton" type="button">上一步</button>
@@ -901,7 +1006,7 @@ int main(void) {
                             <td>O(n²)</td>
                             <td>O(n²)</td>
                             <td>O(1)</td>
-                            <td>穩定</td>
+                            <td><span class="pill good">穩定</span></td>
                         </tr>
                         <tr>
                             <td>選擇排序</td>
@@ -909,7 +1014,7 @@ int main(void) {
                             <td>O(n²)</td>
                             <td>O(n²)</td>
                             <td>O(1)</td>
-                            <td>不穩定</td>
+                            <td><span class="pill bad">不穩定</span></td>
                         </tr>
                         <tr>
                             <td>插入排序</td>
@@ -917,7 +1022,7 @@ int main(void) {
                             <td>O(n²)</td>
                             <td>O(n²)</td>
                             <td>O(1)</td>
-                            <td>穩定</td>
+                            <td><span class="pill good">穩定</span></td>
                         </tr>
                         <tr>
                             <td>合併排序</td>
@@ -925,11 +1030,19 @@ int main(void) {
                             <td>O(n log n)</td>
                             <td>O(n log n)</td>
                             <td>O(n)</td>
-                            <td>穩定</td>
+                            <td><span class="pill good">穩定</span></td>
+                        </tr>
+                        <tr>
+                            <td>快速排序</td>
+                            <td>O(n log n)</td>
+                            <td>O(n log n)</td>
+                            <td>O(n²)</td>
+                            <td>O(log n)</td>
+                            <td><span class="pill bad">不穩定</span></td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="footer-note">插入排序很適合和氣泡排序一起學，因為一個是「交換」，一個是「位移 + 插入」，差異會很清楚。</p>
+                <p class="footer-note" id="bottom">插入排序很適合和氣泡排序一起學，因為一個是「交換」，一個是「位移 + 插入」，差異會很清楚。</p>
             </section>
 
             <section class="panel" id="usage">
@@ -974,12 +1087,18 @@ int main(void) {
         </div>
     </main>
 
+    <a class="scroll-down" href="#bottom" aria-label="快速前往頁面底部" title="往下到底">↓</a>
+    <a class="back-to-top" href="#top" aria-label="回到頁面頂部" title="回到頂部">↑</a>
+
     <script>
-        const initialArray = [8, 4, 6, 3, 7];
+        const defaultArray = [8, 4, 6, 3, 7];
         const barStage = document.getElementById('barStage');
         const stepDescription = document.getElementById('stepDescription');
         const stepCounter = document.getElementById('stepCounter');
         const passInfo = document.getElementById('passInfo');
+        const arrayInput = document.getElementById('arrayInput');
+        const applyButton = document.getElementById('applyButton');
+        const randomButton = document.getElementById('randomButton');
         const prevButton = document.getElementById('prevButton');
         const nextButton = document.getElementById('nextButton');
         const resetButton = document.getElementById('resetButton');
@@ -1070,11 +1189,50 @@ int main(void) {
             return steps;
         }
 
-        const steps = buildInsertionSteps(initialArray);
+        let steps = [];
         let currentStep = 0;
         let autoplayId = null;
 
+        function parseInputValues(rawText) {
+            const values = rawText
+                .split(/[\s,，、]+/)
+                .map(function(part) {
+                    return part.trim();
+                })
+                .filter(Boolean)
+                .map(Number);
+
+            if (!values.length || values.some(function(value) {
+                return !Number.isFinite(value);
+            })) {
+                return null;
+            }
+
+            return values;
+        }
+
+        function createRandomValues(length) {
+            return Array.from({ length: length }, function() {
+                return Math.floor(Math.random() * 90) + 10;
+            });
+        }
+
+        function setDemoValues(values, syncInput) {
+            steps = buildInsertionSteps(values);
+            currentStep = 0;
+
+            if (syncInput) {
+                arrayInput.value = values.join(', ');
+            }
+
+            renderStep(currentStep);
+        }
+
         function renderStep(index) {
+            if (!steps.length) {
+                return;
+            }
+
             const step = steps[index];
             const max = Math.max(...step.array);
 
@@ -1125,9 +1283,37 @@ int main(void) {
             if (autoplayId) {
                 window.clearInterval(autoplayId);
                 autoplayId = null;
-                renderStep(currentStep);
             }
+
+            playButton.textContent = '自動播放';
         }
+
+        applyButton.addEventListener('click', function() {
+            const values = parseInputValues(arrayInput.value);
+
+            if (!values || values.length === 0) {
+                stepDescription.textContent = '請輸入至少一個數字，並以逗號、空白或換行分隔。';
+                return;
+            }
+
+            stopAutoplay();
+            setDemoValues(values, true);
+        });
+
+        randomButton.addEventListener('click', function() {
+            const length = Math.max(2, steps.length ? steps[0].array.length : defaultArray.length);
+            const values = createRandomValues(length);
+
+            stopAutoplay();
+            setDemoValues(values, true);
+            stepDescription.textContent = '已隨機產生新資料，可以開始觀察排序步驟。';
+        });
+
+        arrayInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                applyButton.click();
+            }
+        });
 
         prevButton.addEventListener('click', () => {
             stopAutoplay();
@@ -1166,7 +1352,7 @@ int main(void) {
             renderStep(currentStep);
         });
 
-        renderStep(currentStep);
+        setDemoValues(defaultArray, true);
     </script>
 </body>
 </html>

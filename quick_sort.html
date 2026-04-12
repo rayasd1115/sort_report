@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>合併排序是什麼｜Merge Sort 視覺化介紹</title>
+    <title>快速排序是什麼｜Quick Sort 視覺化介紹</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap');
 
         :root {
-            --bg: #e7f1ef;
+            --bg: #f2e9e3;
             --paper: rgba(255, 253, 248, 0.9);
             --paper-strong: #fffefb;
             --ink: #1f2933;
             --muted: #566270;
             --line: rgba(71, 85, 105, 0.16);
-            --primary: #0f766e;
-            --primary-deep: #115e59;
-            --secondary: #0e7490;
+            --primary: #b91c1c;
+            --primary-deep: #7f1d1d;
+            --secondary: #c2410c;
             --soft-teal: #e8f8f5;
             --soft-blue: #e9f3fb;
             --soft-warm: #fff2de;
-            --shadow: 0 20px 44px rgba(17, 94, 89, 0.12);
+            --shadow: 0 20px 44px rgba(127, 29, 29, 0.12);
             --radius-xl: 28px;
             --radius-lg: 20px;
-            --bg-spot-a: rgba(15, 118, 110, 0.20);
-            --bg-spot-b: rgba(14, 116, 144, 0.17);
-            --bg-grad-start: #dceae6;
-            --bg-grad-mid: #e8f1ef;
-            --bg-grad-end: #edf5f3;
+            --bg-spot-a: rgba(185, 28, 28, 0.20);
+            --bg-spot-b: rgba(194, 65, 12, 0.16);
+            --bg-grad-start: #ecddd4;
+            --bg-grad-mid: #f3e9e1;
+            --bg-grad-end: #f5ece6;
         }
 
         * {
@@ -299,14 +299,16 @@
 
         .intro-grid,
         .process-grid,
-        .summary-grid {
+        .summary-grid,
+        .complex-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 18px;
         }
 
         .card,
-        .process-step {
+        .process-step,
+        .mini-card {
             padding: 20px;
             border-radius: var(--radius-lg);
             border: 1px solid rgba(71, 85, 105, 0.12);
@@ -344,6 +346,14 @@
             font-weight: 700;
         }
 
+        .code-layout,
+        .visual-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 18px;
+            align-items: start;
+        }
+
         .code-card {
             background: linear-gradient(160deg, #132131, #1a3348 55%, #204661 100%);
             color: #eff4fb;
@@ -368,17 +378,9 @@
             border-radius: 50%;
         }
 
-        .dot.red {
-            background: #fb7185;
-        }
-
-        .dot.yellow {
-            background: #fbbf24;
-        }
-
-        .dot.green {
-            background: #34d399;
-        }
+        .dot.red { background: #fb7185; }
+        .dot.yellow { background: #fbbf24; }
+        .dot.green { background: #34d399; }
 
         pre {
             margin: 0;
@@ -389,102 +391,9 @@
             line-height: 1.65;
         }
 
-        .demo-wrap {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-            margin-top: 12px;
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 10px;
-        }
-
-        .number-input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 14px;
-            border: 1px solid var(--line);
-            font-size: 1rem;
-            font-family: inherit;
-            color: var(--ink);
-            background: #fff;
-        }
-
-        .result-box {
-            border-radius: 16px;
-            border: 1px solid rgba(71, 85, 105, 0.18);
-            background: rgba(255, 255, 255, 0.92);
-            padding: 14px;
-            min-height: 74px;
-        }
-
-        .result-title {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .result-text {
-            margin: 0;
-            font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
-            color: var(--secondary);
-            word-break: break-word;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid rgba(71, 85, 105, 0.16);
-        }
-
-        .table th,
-        .table td {
-            padding: 12px 14px;
-            text-align: left;
-            border-bottom: 1px solid rgba(71, 85, 105, 0.12);
-        }
-
-        .table thead {
-            background: rgba(15, 118, 110, 0.1);
-        }
-
-        .table tbody tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.74);
-        }
-
-        .pill {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 999px;
-            padding: 4px 10px;
-            font-size: 0.88rem;
-            font-weight: 700;
-        }
-
-        .pill.good {
-            color: #0f766e;
-            background: rgba(16, 185, 129, 0.12);
-        }
-
-        .pill.bad {
-            color: #b91c1c;
-            background: rgba(239, 68, 68, 0.12);
-        }
-
-        .code-layout {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 18px;
-            align-items: start;
-        }
-
-        .side-card {
+        .side-card,
+        .demo-card,
+        .status-box {
             padding: 20px;
             border-radius: 22px;
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 242, 232, 0.92));
@@ -492,130 +401,40 @@
             box-shadow: 0 12px 24px rgba(17, 94, 89, 0.08);
         }
 
-        .key-points {
+        .key-points,
+        .clean-list {
             margin: 0;
             padding-left: 20px;
             color: var(--muted);
         }
 
-        .visual-grid {
+        .demo-inputs {
             display: grid;
-            grid-template-columns: 1.05fr 0.75fr;
-            gap: 18px;
-            align-items: start;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            gap: 10px;
+            margin-bottom: 12px;
         }
 
-        .demo-card {
-            padding: 20px;
-            border-radius: 22px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(234, 247, 244, 0.86));
-            border: 1px solid rgba(71, 85, 105, 0.12);
-            box-shadow: 0 12px 24px rgba(17, 94, 89, 0.08);
+        .number-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #fff;
+            color: var(--ink);
+            font: inherit;
+        }
+
+        .input-hint {
+            margin: 0 0 12px;
+            color: var(--muted);
+            font-size: 0.92rem;
         }
 
         .bar-stage {
             display: grid;
             gap: 12px;
-            min-height: 260px;
-        }
-
-        .merge-stage {
-            display: grid;
-            gap: 12px;
-        }
-
-        .merge-tree {
-            display: grid;
-            gap: 14px;
-        }
-
-        .merge-tree-split {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .merge-branch-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-width: 0;
-        }
-
-        .merge-branch-card {
-            border-radius: 18px;
-            border: 1px solid rgba(71, 85, 105, 0.12);
-            background: rgba(255, 255, 255, 0.72);
-            padding: 12px;
-        }
-
-        .merge-branch-card.result-card {
-            background: rgba(15, 118, 110, 0.08);
-            border-color: rgba(15, 118, 110, 0.18);
-        }
-
-        .merge-branch-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-            color: var(--muted);
-            font-size: 0.86rem;
-            font-weight: 700;
-        }
-
-        .merge-branch-tag {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(17, 94, 89, 0.08);
-            color: var(--primary-deep);
-        }
-
-        .merge-link {
-            display: grid;
-            align-items: center;
-            justify-items: center;
-            gap: 6px;
-            color: var(--muted);
-            font-size: 0.82rem;
-            font-weight: 700;
-            align-self: stretch;
-        }
-
-        .merge-link::before,
-        .merge-link::after {
-            content: "";
-            width: 2px;
-            flex: 1;
-            background: rgba(71, 85, 105, 0.18);
-            min-height: 18px;
-        }
-
-        .merge-bridge-label {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5px 10px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(71, 85, 105, 0.14);
-        }
-
-        .merge-result-row {
-            padding: 12px;
-            border-radius: 18px;
-            border: 1px solid rgba(15, 118, 110, 0.18);
-            background: rgba(15, 118, 110, 0.06);
-        }
-
-        .merge-column-label {
-            font-size: 0.86rem;
-            font-weight: 700;
-            color: var(--muted);
+            min-height: 240px;
         }
 
         .bar-row {
@@ -627,11 +446,6 @@
             border-radius: 18px;
             background: rgba(255, 255, 255, 0.72);
             border: 1px solid rgba(71, 85, 105, 0.10);
-        }
-
-        .bar-row.result {
-            background: rgba(15, 118, 110, 0.08);
-            border-color: rgba(15, 118, 110, 0.18);
         }
 
         .bar-label {
@@ -673,54 +487,6 @@
             background: linear-gradient(180deg, rgba(217, 119, 6, 0.90), rgba(154, 52, 18, 0.92));
         }
 
-        .bar-value {
-            line-height: 1;
-        }
-
-        .group-divider {
-            width: 100%;
-            height: 1px;
-            background: rgba(71, 85, 105, 0.10);
-        }
-
-        .demo-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .demo-inputs {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto auto;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .number-input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 14px;
-            border: 1px solid var(--line);
-            background: #fff;
-            color: var(--ink);
-            font: inherit;
-        }
-
-        .input-hint {
-            margin: 0 0 12px;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .status-box {
-            padding: 20px;
-            border-radius: 22px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 242, 232, 0.92));
-            border: 1px solid rgba(71, 85, 105, 0.12);
-            box-shadow: 0 12px 24px rgba(17, 94, 89, 0.08);
-        }
-
         .step-counter {
             display: inline-flex;
             align-items: center;
@@ -732,18 +498,55 @@
             font-weight: 700;
         }
 
-        .complex-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
-            margin-bottom: 16px;
+        .demo-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
         }
 
-        .mini-card {
-            padding: 20px;
-            border-radius: 20px;
-            background: var(--paper-strong);
-            border: 1px solid rgba(71, 85, 105, 0.12);
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(71, 85, 105, 0.16);
+            margin-top: 14px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.12);
+        }
+
+        .table thead {
+            background: rgba(15, 118, 110, 0.1);
+        }
+
+        .table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.74);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .pill.good {
+            color: #0f766e;
+            background: rgba(16, 185, 129, 0.12);
+        }
+
+        .pill.bad {
+            color: #b91c1c;
+            background: rgba(239, 68, 68, 0.12);
         }
 
         .value {
@@ -755,17 +558,6 @@
             color: var(--primary-deep);
         }
 
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .clean-list {
-            margin: 0;
-            padding-left: 20px;
-        }
-
         .footer-note {
             margin-top: 16px;
             text-align: center;
@@ -773,35 +565,10 @@
             color: var(--muted);
         }
 
-        .back-to-top {
-            position: fixed;
-            right: 22px;
-            bottom: 22px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 999px;
-            border: 1px solid rgba(71, 85, 105, 0.18);
-            text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #fff;
-            background: linear-gradient(135deg, var(--primary), var(--primary-deep));
-            box-shadow: 0 14px 28px rgba(17, 94, 89, 0.24);
-            z-index: 30;
-            transition: transform 0.22s ease, box-shadow 0.22s ease;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-2px);
-        }
-
+        .back-to-top,
         .scroll-down {
             position: fixed;
             right: 22px;
-            bottom: 78px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -813,14 +580,20 @@
             font-size: 1.2rem;
             font-weight: 800;
             color: #fff;
-            background: linear-gradient(135deg, var(--secondary), #0b4f75);
-            box-shadow: 0 14px 28px rgba(11, 79, 117, 0.24);
             z-index: 30;
             transition: transform 0.22s ease, box-shadow 0.22s ease;
         }
 
-        .scroll-down:hover {
-            transform: translateY(-2px);
+        .back-to-top {
+            bottom: 22px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+            box-shadow: 0 14px 28px rgba(17, 94, 89, 0.24);
+        }
+
+        .scroll-down {
+            bottom: 78px;
+            background: linear-gradient(135deg, var(--secondary), #0b4f75);
+            box-shadow: 0 14px 28px rgba(11, 79, 117, 0.24);
         }
 
         @media (max-width: 980px) {
@@ -866,6 +639,10 @@
                 width: 100%;
             }
 
+            .demo-inputs {
+                grid-template-columns: 1fr;
+            }
+
             .scroll-down {
                 right: 14px;
                 bottom: 66px;
@@ -886,7 +663,7 @@
     <main class="page">
         <div class="top-nav">
             <a class="home-link" href="index.html">← 返回程式教學首頁</a>
-            <div class="quick-links">
+            <div class="quick-links" aria-label="快速導覽">
                 <a class="quick-link" href="bubble_sort.html">氣泡排序</a>
                 <a class="quick-link" href="selection_sort.html">選擇排序</a>
                 <a class="quick-link" href="insertion_sort.html">插入排序</a>
@@ -896,13 +673,14 @@
         </div>
 
         <section class="hero">
-            <span class="eyebrow">Sorting Basics • Merge Sort</span>
+            <span class="eyebrow">Sorting Basics • Quick Sort</span>
             <div class="hero-grid">
                 <div>
-                    <h1>合併排序是什麼？</h1>
+                    <h1>快速排序是什麼？</h1>
                     <p>
-                        合併排序是一種經典的分而治之排序法。你可以先把它和氣泡排序一起看：Bubble Sort 是反覆比較與交換，Merge Sort 則是先拆分、再合併。
-                        這種做法讓它在資料量變大時，仍能維持穩定的 O(n log n) 效能。
+                        快速排序是一種經典的分而治之演算法。每一輪先選一個樞紐值（pivot），
+                        把比 pivot 小的放左邊、比 pivot 大的放右邊，再遞迴處理左右子陣列。
+                        平均情況下，時間複雜度是 O(n log n)。
                     </p>
                     <div class="hero-actions">
                         <a class="button-link primary" href="#overview">排序概念總覽</a>
@@ -918,7 +696,7 @@
                 <div class="stat-stack">
                     <article class="metric">
                         <span class="metric-title">核心策略</span>
-                        <span class="metric-value">拆分 + 合併</span>
+                        <span class="metric-value">分區 + 遞迴</span>
                     </article>
                     <article class="metric">
                         <span class="metric-title">平均時間複雜度</span>
@@ -926,7 +704,7 @@
                     </article>
                     <article class="metric">
                         <span class="metric-title">排序特性</span>
-                        <span class="metric-value">穩定排序</span>
+                        <span class="metric-value">通常不穩定</span>
                     </article>
                 </div>
             </div>
@@ -937,26 +715,26 @@
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">Overview</p>
-                        <h2>先切小，再合併回來</h2>
+                        <h2>先分區，再讓 pivot 就位</h2>
                     </div>
-                    <p class="section-note">如果你已經看過氣泡排序，這裡的重點就是換一種思考方式，不再靠反覆交換，而是用拆分與合併完成排序。</p>
+                    <p class="section-note">Quick Sort 的重點不是一路交換到底，而是每輪先完成一次分區。</p>
                 </div>
                 <div class="intro-grid">
                     <article class="card accent-card">
-                        <h3>1. 把大問題切成小問題</h3>
-                        <p>Merge Sort 會先把陣列切成左右兩半，直到每段都只剩 1 個元素。</p>
+                        <h3>1. 選擇 pivot</h3>
+                        <p>可用最後一個元素當 pivot，也可用隨機或三數取中降低最壞情況機率。</p>
                     </article>
                     <article class="card soft-card">
-                        <h3>2. 小段資料天然已排序</h3>
-                        <p>單一元素本身就符合排序狀態，這會成為後面合併的基礎。</p>
+                        <h3>2. 分區</h3>
+                        <p>把小於等於 pivot 的值移往左邊，最後把 pivot 放到中間正確位置。</p>
                     </article>
                     <article class="card warm-card">
-                        <h3>3. 合併時只看最前面</h3>
-                        <p>當左右兩段都排好之後，只要比較兩邊最前面的元素，就能決定下一個放誰。</p>
+                        <h3>3. 左右遞迴</h3>
+                        <p>pivot 固定後，左右兩側區間再各自做同樣流程。</p>
                     </article>
                     <article class="card">
-                        <h3>4. 最後回到完整陣列</h3>
-                        <p>每次合併都會產生更大的已排序區間，直到整個陣列重新拼回來。</p>
+                        <h3>4. 得到完整排序</h3>
+                        <p>當每個區間長度都小於等於 1，陣列自然完成排序。</p>
                     </article>
                 </div>
             </section>
@@ -965,26 +743,26 @@
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">How It Works</p>
-                        <h2>合併排序的運作流程</h2>
+                        <h2>快速排序的運作流程</h2>
                     </div>
-                    <p class="section-note">把它想成先把一疊牌拆開，再把排好的牌一張一張合回去。</p>
+                    <p class="section-note">每一輪先讓 pivot 就位，再把問題切成左右兩個更小的子問題。</p>
                 </div>
                 <div class="process-grid">
                     <article class="process-step" data-step="01">
-                        <h3>先切成左右兩半</h3>
-                        <p>把原始陣列切成左右兩半，這個動作會一直重複到每一段只剩一個元素。</p>
+                        <h3>選定 pivot</h3>
+                        <p>在目前區間挑一個元素當 pivot，常見寫法會用區間最後一個值。</p>
                     </article>
                     <article class="process-step" data-step="02">
-                        <h3>左右子陣列各自排序</h3>
-                        <p>左右兩邊會再繼續拆分，讓每一小段都先變成「已排序」狀態。</p>
+                        <h3>掃描並分區</h3>
+                        <p>由左到右掃描，把小於等於 pivot 的值移到左側區塊。</p>
                     </article>
                     <article class="process-step" data-step="03">
-                        <h3>用雙指標做合併</h3>
-                        <p>兩段已排序資料會從最前面開始比較，較小的值先放入結果陣列。</p>
+                        <h3>pivot 就位</h3>
+                        <p>掃描結束後把 pivot 交換到中間，讓它位於最終正確位置。</p>
                     </article>
                     <article class="process-step" data-step="04">
-                        <h3>把結果一層層回推</h3>
-                        <p>每合併一層，就得到更大的已排序區間，最後回到完整陣列。</p>
+                        <h3>遞迴左右子陣列</h3>
+                        <p>對 pivot 左右兩邊重複同樣流程，直到區間長度小於等於 1。</p>
                     </article>
                 </div>
             </section>
@@ -995,7 +773,7 @@
                         <p class="section-kicker">Implementation</p>
                         <h2>C 語言實作</h2>
                     </div>
-                    <p class="section-note">這個版本用 C 語言示範 Merge Sort，重點在於 merge 函式如何把兩段已排序資料接回去。</p>
+                    <p class="section-note">以下採用 Lomuto partition，示範 Quick Sort 典型寫法。</p>
                 </div>
                 <div class="code-layout">
                     <article class="code-card">
@@ -1006,41 +784,35 @@
                         </div>
 <pre><code>#include &lt;stdio.h&gt;
 
-void merge(int arr[], int temp[], int left, int mid, int right) {
-    int i = left;
-    int j = mid + 1;
-    int k = left;
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
-    while (i &lt;= mid &amp;&amp; j &lt;= right) {
-        if (arr[i] &lt;= arr[j]) {
-            temp[k++] = arr[i++];
-        } else {
-            temp[k++] = arr[j++];
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low;
+
+    for (int j = low; j &lt; high; j++) {
+        if (arr[j] &lt;= pivot) {
+            swap(&arr[i], &arr[j]);
+            i++;
         }
     }
 
-    while (i &lt;= mid) {
-        temp[k++] = arr[i++];
-    }
-
-    while (j &lt;= right) {
-        temp[k++] = arr[j++];
-    }
-
-    for (i = left; i &lt;= right; i++) {
-        arr[i] = temp[i];
-    }
+    swap(&arr[i], &arr[high]);
+    return i;
 }
 
-void mergeSort(int arr[], int temp[], int left, int right) {
-    if (left &gt;= right) {
+void quickSort(int arr[], int low, int high) {
+    if (low &gt;= high) {
         return;
     }
 
-    int mid = left + (right - left) / 2;
-    mergeSort(arr, temp, left, mid);
-    mergeSort(arr, temp, mid + 1, right);
-    merge(arr, temp, left, mid, right);
+    int pivotIndex = partition(arr, low, high);
+    quickSort(arr, low, pivotIndex - 1);
+    quickSort(arr, pivotIndex + 1, high);
 }
 
 void printArray(int arr[], int n) {
@@ -1053,12 +825,11 @@ void printArray(int arr[], int n) {
 int main(void) {
     int arr[] = {38, 27, 43, 3, 9, 82, 10};
     int n = sizeof(arr) / sizeof(arr[0]);
-    int temp[n];
 
     printf("排序前: ");
     printArray(arr, n);
 
-    mergeSort(arr, temp, 0, n - 1);
+    quickSort(arr, 0, n - 1);
 
     printf("排序後: ");
     printArray(arr, n);
@@ -1067,11 +838,11 @@ int main(void) {
 }</code></pre>
                     </article>
                     <aside class="side-card">
-                        <h3>閱讀這段程式時，先看三個重點</h3>
+                        <h3>閱讀重點</h3>
                         <ol class="key-points">
-                            <li>mergeSort 會持續把區間拆半，直到 left 和 right 重疊。</li>
-                            <li>merge 函式負責把兩段已排序資料重新整理成一段完整結果。</li>
-                            <li>temp 陣列用來暫存合併結果，再一次寫回原陣列。</li>
+                            <li>partition 會回傳 pivot 的最終位置。</li>
+                            <li>quickSort 再對 pivot 左右兩邊遞迴。</li>
+                            <li>這個版本可原地排序，不需要額外合併陣列。</li>
                         </ol>
                     </aside>
                 </div>
@@ -1081,9 +852,9 @@ int main(void) {
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">Visual Demo</p>
-                        <h2>互動式排序示範</h2>
+                        <h2>互動式快速排序示範</h2>
                     </div>
-                    <p class="section-note">這裡預設使用 [38, 27, 43, 3, 9, 82, 10]，你可以改成自己的數字或隨機產生一組新資料。</p>
+                    <p class="section-note">橘色為目前 pivot 或比較中元素，綠色代表已固定位置。</p>
                 </div>
 
                 <div class="visual-grid">
@@ -1094,7 +865,7 @@ int main(void) {
                             <button class="control-button secondary" id="randomButton" type="button">隨機產生</button>
                         </div>
                         <p class="input-hint">可用逗號、空白或換行分隔數字，按 Enter 也可以套用。</p>
-                        <div class="bar-stage" id="demoStage" aria-label="Merge Sort 視覺化步驟"></div>
+                        <div class="bar-stage" id="demoStage" aria-label="Quick Sort 視覺化步驟"></div>
                         <div class="demo-controls">
                             <button class="control-button secondary" id="prevButton" type="button">上一步</button>
                             <button class="control-button primary" id="playButton" type="button">自動播放</button>
@@ -1105,9 +876,8 @@ int main(void) {
                     <aside class="status-box">
                         <p><strong>目前狀態</strong></p>
                         <p id="stepTitle">初始資料</p>
-                        <p id="stepDescription" class="result-note">原始陣列尚未拆分，接下來會先切成左右兩半。</p>
+                        <p id="stepDescription" class="result-note">尚未開始分區，下一步會先選擇 pivot。</p>
                         <p><span class="step-counter" id="stepCounter">1 / 1</span></p>
-                        <p class="result-note">這個示範特別適合拿來和氣泡排序對照：Bubble Sort 是交換，Merge Sort 是拆分再合併。</p>
                     </aside>
                 </div>
             </section>
@@ -1118,31 +888,31 @@ int main(void) {
                         <p class="section-kicker">Complexity</p>
                         <h2>時間與空間複雜度分析</h2>
                     </div>
-                    <p class="section-note">合併排序的優勢是速度穩定，但代價是需要額外的暫存空間。</p>
+                    <p class="section-note">平均很快，但若 pivot 選不好，最壞情況會退化成 O(n²)。</p>
                 </div>
                 <div class="complex-grid">
                     <article class="mini-card">
                         <h3>最佳情況</h3>
-                        <p>即使資料已接近排序，仍然需要完成拆分與合併流程。</p>
+                        <p>分區接近平衡，遞迴深度良好。</p>
                         <span class="value">O(n log n)</span>
                     </article>
                     <article class="mini-card">
                         <h3>平均情況</h3>
-                        <p>效能非常穩定，這也是它常被當作高效率排序範例的原因。</p>
+                        <p>實務常見，效能通常很不錯。</p>
                         <span class="value">O(n log n)</span>
                     </article>
                     <article class="mini-card">
                         <h3>最壞情況</h3>
-                        <p>因為流程固定，最壞情況也不會退化成平方級。</p>
-                        <span class="value">O(n log n)</span>
+                        <p>每次 pivot 都落在極端邊界。</p>
+                        <span class="value">O(n²)</span>
                     </article>
                     <article class="mini-card">
                         <h3>額外空間</h3>
-                        <p>需要額外暫存陣列來完成合併，這是 Merge Sort 的主要代價。</p>
-                        <span class="value">O(n)</span>
+                        <p>主要來自遞迴呼叫堆疊。</p>
+                        <span class="value">O(log n)</span>
                     </article>
                 </div>
-                <table class="table compare-table" aria-label="合併排序複雜度表格">
+                <table class="table" aria-label="快速排序複雜度表格">
                     <thead>
                         <tr>
                             <th>項目</th>
@@ -1154,22 +924,22 @@ int main(void) {
                         <tr>
                             <td>最佳時間</td>
                             <td>O(n log n)</td>
-                            <td>資料已接近排序也需要拆分與合併。</td>
+                            <td>分區平衡時，每層處理量接近 n。</td>
                         </tr>
                         <tr>
                             <td>平均時間</td>
                             <td>O(n log n)</td>
-                            <td>效能穩定，適合中大型資料集。</td>
+                            <td>一般情況下具備良好實務效能。</td>
                         </tr>
                         <tr>
                             <td>最差時間</td>
-                            <td>O(n log n)</td>
-                            <td>流程固定，不會像某些演算法退化到 O(n²)。</td>
+                            <td>O(n²)</td>
+                            <td>pivot 選得不佳時退化。</td>
                         </tr>
                         <tr>
                             <td>額外空間</td>
-                            <td>O(n)</td>
-                            <td>合併過程需要暫存陣列。</td>
+                            <td>O(log n)</td>
+                            <td>通常主要是遞迴堆疊。</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1181,29 +951,27 @@ int main(void) {
                         <p class="section-kicker">Comparison</p>
                         <h2>優缺點與其他排序比較</h2>
                     </div>
-                    <p class="section-note">如果你要記住 Merge Sort 的定位，最重要的是：它比 Bubble Sort 更快，但需要更多空間。</p>
+                    <p class="section-note">快速排序常見且高效，但是否適合仍要看資料特性與穩定性需求。</p>
                 </div>
                 <div class="summary-grid">
                     <article class="card accent-card">
                         <h3>優點</h3>
                         <ul class="clean-list">
-                            <li>時間複雜度穩定，平均、最好與最壞情況都很一致。</li>
-                            <li>屬於穩定排序，相同值的相對順序可以保留。</li>
-                            <li>適合中大型資料集，比 Bubble Sort 更有實務價值。</li>
-                            <li>分而治之的寫法很適合學習遞迴思維。</li>
+                            <li>平均時間複雜度為 O(n log n)，實務上速度通常很好。</li>
+                            <li>可原地排序，額外記憶體需求相對低。</li>
+                            <li>分區流程清楚，適合練習分治與遞迴思維。</li>
                         </ul>
                     </article>
                     <article class="card soft-card">
                         <h3>缺點</h3>
                         <ul class="clean-list">
-                            <li>需要額外的 O(n) 暫存空間。</li>
-                            <li>遞迴與合併邏輯比 Bubble Sort 更長，初學者要花更多時間理解。</li>
-                            <li>對非常小的資料集，不一定比簡單排序法更划算。</li>
-                            <li>如果只是學最基礎的交換與比較，Bubble Sort 更直觀。</li>
+                            <li>最壞情況會退化為 O(n²)。</li>
+                            <li>屬於不穩定排序，不保證相同值的相對順序。</li>
+                            <li>效能表現高度依賴 pivot 選擇策略。</li>
                         </ul>
                     </article>
                 </div>
-                <table class="table compare-table" aria-label="排序演算法比較表">
+                <table class="table" aria-label="排序演算法比較表">
                     <thead>
                         <tr>
                             <th>演算法</th>
@@ -1263,25 +1031,25 @@ int main(void) {
                 <div class="section-head">
                     <div>
                         <p class="section-kicker">When To Use</p>
-                        <h2>什麼情況適合使用合併排序？</h2>
+                        <h2>什麼情況適合使用快速排序？</h2>
                     </div>
-                    <p class="section-note">它很適合需要穩定效能的場景，尤其是資料量越大時越能看出優勢。</p>
+                    <p class="section-note">Quick Sort 在一般排序任務很常見，但也要注意它的最壞情況與穩定性。</p>
                 </div>
                 <div class="summary-grid">
                     <article class="card accent-card">
                         <h3>適合</h3>
                         <ul class="clean-list">
-                            <li>資料量較大，想要穩定的 O(n log n) 效能。</li>
-                            <li>需要穩定排序，保留相同值的相對順序。</li>
-                            <li>想學習分而治之與遞迴的典型範例。</li>
+                            <li>想要平均效能良好的通用排序方案。</li>
+                            <li>希望原地排序，降低額外記憶體開銷。</li>
+                            <li>想練習分區（partition）與遞迴分治思維。</li>
                         </ul>
                     </article>
                     <article class="card soft-card">
                         <h3>不適合</h3>
                         <ul class="clean-list">
-                            <li>非常小的資料集，且你更在意程式簡短。</li>
-                            <li>記憶體資源很緊張，無法接受 O(n) 額外空間。</li>
-                            <li>只需要最簡單、最直觀的排序流程。</li>
+                            <li>必須保證穩定排序（相同值順序不能改變）。</li>
+                            <li>需要避免最壞情況退化到 O(n²) 的風險。</li>
+                            <li>輸入資料特性容易讓 pivot 長期不平衡且未做優化時。</li>
                         </ul>
                     </article>
                 </div>
@@ -1293,28 +1061,28 @@ int main(void) {
                         <p class="section-kicker">Takeaway</p>
                         <h2>重點總結</h2>
                     </div>
-                    <p class="section-note">Merge Sort 的核心不是交換，而是先拆開再合回來。</p>
+                    <p class="section-note">快速排序的核心是「分區」，不是單純重複交換。</p>
                 </div>
                 <div class="summary-grid">
                     <article class="card">
                         <h3>你應該記住的事</h3>
                         <ul class="clean-list">
-                            <li>拆分到最小單位後，再用合併把資料重新整理成有序陣列。</li>
-                            <li>效能穩定，但要付出額外記憶體成本。</li>
+                            <li>每輪先讓 pivot 就位，再遞迴處理左右子陣列。</li>
+                            <li>平均時間複雜度是 O(n log n)，實務上常有優秀表現。</li>
                         </ul>
                     </article>
-                    <article class="card soft-card">
+                    <article class="card warm-card">
                         <h3>實際定位</h3>
                         <ul class="clean-list">
-                            <li>適合中大型資料與需要穩定排序的場景。</li>
-                            <li>也是理解遞迴與分而治之時非常經典的範例。</li>
+                            <li>常見且高效的通用排序策略之一。</li>
+                            <li>需搭配良好的 pivot 策略，降低最壞情況風險。</li>
                         </ul>
                     </article>
                 </div>
             </section>
         </div>
 
-        <p class="footer-note" id="bottom">看完合併排序後，你可以回首頁比較 Bubble、Selection、Insertion 與 Merge Sort 的差異。</p>
+        <p class="footer-note" id="bottom">看完快速排序後，你可以回首頁比較 Bubble、Selection、Insertion、Merge 與 Quick Sort 的差異。</p>
     </main>
 
     <a class="scroll-down" href="#bottom" aria-label="快速前往頁面底部" title="往下到底">↓</a>
@@ -1363,108 +1131,88 @@ int main(void) {
             });
         }
 
-        function mergeArrays(leftValues, rightValues) {
-            var merged = [];
-            var leftIndex = 0;
-            var rightIndex = 0;
-
-            while (leftIndex < leftValues.length && rightIndex < rightValues.length) {
-                if (leftValues[leftIndex] <= rightValues[rightIndex]) {
-                    merged.push(leftValues[leftIndex]);
-                    leftIndex += 1;
-                } else {
-                    merged.push(rightValues[rightIndex]);
-                    rightIndex += 1;
-                }
-            }
-
-            while (leftIndex < leftValues.length) {
-                merged.push(leftValues[leftIndex]);
-                leftIndex += 1;
-            }
-
-            while (rightIndex < rightValues.length) {
-                merged.push(rightValues[rightIndex]);
-                rightIndex += 1;
-            }
-
-            return merged;
-        }
-
-        function buildMergeSteps(values) {
-            var source = values.slice();
-            var steps = [
+        function buildQuickSteps(values) {
+            const arr = values.slice();
+            const fixed = new Set();
+            const steps = [
                 {
                     title: '初始資料',
-                    description: '原始陣列尚未拆分，先看完整資料長什麼樣子。',
-                    groups: [
-                        { label: '原始陣列', values: source.slice() }
-                    ]
+                    description: '尚未開始分區，先觀察原始陣列。',
+                    values: arr.slice(),
+                    active: [],
+                    fixed: []
                 }
             ];
 
-            if (source.length <= 1) {
-                steps.push({
-                    title: '排序完成',
-                    description: '只有一個元素或沒有元素，已經是排序結果。',
-                    groups: [
-                        { label: '最終結果', values: source.slice(), tone: 'result' }
-                    ]
-                });
-
-                return steps;
+            function swap(i, j) {
+                const temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
             }
 
-            function trace(segment, label) {
-                if (segment.length <= 1) {
-                    return segment.slice();
+            function capture(title, description, activeIndices) {
+                steps.push({
+                    title: title,
+                    description: description,
+                    values: arr.slice(),
+                    active: activeIndices.slice(),
+                    fixed: Array.from(fixed)
+                });
+            }
+
+            function trace(left, right) {
+                if (left > right) {
+                    return;
                 }
 
-                var mid = Math.floor(segment.length / 2);
-                var leftValues = segment.slice(0, mid);
-                var rightValues = segment.slice(mid);
+                if (left === right) {
+                    fixed.add(left);
+                    capture('單一元素區間', '區間 [' + left + ', ' + right + '] 只有一個元素，直接視為已定位。', [left]);
+                    return;
+                }
 
-                steps.push({
-                    title: '切分區間',
-                    description: label + ' 切成左右兩半。',
-                    groups: [
-                        { label: label + ' 左半', values: leftValues.slice() },
-                        { label: label + ' 右半', values: rightValues.slice() }
-                    ]
-                });
+                const pivot = arr[right];
+                let i = left;
 
-                var sortedLeft = trace(leftValues, label + ' 左半');
-                var sortedRight = trace(rightValues, label + ' 右半');
-                var merged = mergeArrays(sortedLeft, sortedRight);
+                capture('選擇 pivot', '區間 [' + left + ', ' + right + '] 以 ' + pivot + ' 作為 pivot。', [right]);
 
-                steps.push({
-                    title: '合併區間',
-                    description: '把 ' + label + ' 的兩段已排序資料合併。',
-                    groups: [
-                        { label: label + ' 左段', values: sortedLeft.slice() },
-                        { label: label + ' 右段', values: sortedRight.slice() },
-                        { label: '合併後', values: merged.slice(), tone: 'result' }
-                    ]
-                });
+                for (let j = left; j < right; j += 1) {
+                    capture('掃描元素', '比較 arr[' + j + '] = ' + arr[j] + ' 與 pivot = ' + pivot + '。', [j, right]);
 
-                return merged;
+                    if (arr[j] <= pivot) {
+                        swap(i, j);
+                        capture('交換到左側', 'arr[' + j + '] <= pivot，與 arr[' + i + '] 交換。', [i, j, right]);
+                        i += 1;
+                    }
+                }
+
+                swap(i, right);
+                fixed.add(i);
+                capture('pivot 就位', 'pivot 放到索引 ' + i + '，左右區間可獨立遞迴。', [i]);
+
+                trace(left, i - 1);
+                trace(i + 1, right);
             }
 
-            var sorted = trace(source, '目前區間');
+            if (arr.length) {
+                trace(0, arr.length - 1);
+            }
 
             steps.push({
-                title: '最後結果',
-                description: '把所有區間合在一起，得到最終答案。',
-                groups: [
-                    { label: '最終結果', values: sorted.slice(), tone: 'result' }
-                ]
+                title: '排序完成',
+                description: '所有區間都處理完畢，陣列已排序。',
+                values: arr.slice(),
+                active: [],
+                fixed: Array.from({ length: arr.length }, function(_, idx) {
+                    return idx;
+                })
             });
 
             return steps;
         }
 
         function setDemoValues(values, syncInput) {
-            demoSteps = buildMergeSteps(values);
+            demoSteps = buildQuickSteps(values);
             activeStep = 0;
 
             if (syncInput) {
@@ -1480,110 +1228,37 @@ int main(void) {
             }
 
             const step = demoSteps[index];
-            const allValues = step.groups.reduce(function(accumulator, group) {
-                return accumulator.concat(group.values);
-            }, []);
-            const maxValue = allValues.length ? Math.max.apply(null, allValues) : 1;
+            const maxValue = step.values.length ? Math.max.apply(null, step.values) : 1;
 
             stepTitle.textContent = step.title;
             stepDescription.textContent = step.description;
             stepCounter.textContent = (index + 1) + ' / ' + demoSteps.length;
 
-            const leftGroups = [];
-            const rightGroups = [];
-            const resultGroups = [];
-            const standaloneGroups = [];
+            const activeSet = new Set(step.active);
+            const fixedSet = new Set(step.fixed);
 
-            step.groups.forEach(function(group) {
-                const normalizedLabel = group.label.toLowerCase();
+            const bars = step.values.map(function(value, idx) {
+                const classes = ['bar'];
 
-                if (group.tone === 'result' || normalizedLabel.includes('合併後') || normalizedLabel.includes('最終結果')) {
-                    resultGroups.push(group);
-                    return;
+                if (fixedSet.has(idx)) {
+                    classes.push('sorted');
                 }
 
-                if (normalizedLabel.includes('左半') || normalizedLabel.includes('左段')) {
-                    leftGroups.push(group);
-                    return;
+                if (activeSet.has(idx)) {
+                    classes.push('active');
                 }
 
-                if (normalizedLabel.includes('右半') || normalizedLabel.includes('右段')) {
-                    rightGroups.push(group);
-                    return;
-                }
+                const height = Math.max(52, (value / maxValue) * 160 + 20);
+                return '<div class="bar-column">' +
+                    '<div class="' + classes.join(' ') + '" style="height:' + height + 'px"><span class="bar-value">' + value + '</span></div>' +
+                    '</div>';
+            }).join('');
 
-                standaloneGroups.push(group);
-            });
-
-            const buildBarColumns = function(group) {
-                return group.values.map(function(value) {
-                    const barClass = group.tone === 'result' ? 'bar sorted' : 'bar';
-                    const height = Math.max(52, (value / maxValue) * 160 + 20);
-                    return '<div class="bar-column">' +
-                        '<div class="' + barClass + '" style="height:' + height + 'px"><span class="bar-value">' + value + '</span></div>' +
-                        '</div>';
-                }).join('');
-            };
-
-            const renderBranchCard = function(group, sideLabel) {
-                return '<section class="merge-branch-card">' +
-                    '<div class="merge-branch-header">' +
-                        '<span class="merge-branch-tag">' + sideLabel + '</span>' +
-                        '<span>' + group.label + '</span>' +
-                    '</div>' +
-                    '<div class="bar-row">' +
-                        buildBarColumns(group) +
-                    '</div>' +
-                '</section>';
-            };
-
-            const mergeStageHtml = ['<div class="merge-tree">'];
-
-            if (leftGroups.length || rightGroups.length) {
-                mergeStageHtml.push(
-                    '<div class="merge-tree-split">' +
-                        '<div class="merge-branch-stack">' +
-                            leftGroups.map(function(group) {
-                                return renderBranchCard(group, '左半邊');
-                            }).join('') +
-                        '</div>' +
-                        '<div class="merge-link">' +
-                            '<span class="merge-bridge-label">拆分 / 合併</span>' +
-                        '</div>' +
-                        '<div class="merge-branch-stack">' +
-                            rightGroups.map(function(group) {
-                                return renderBranchCard(group, '右半邊');
-                            }).join('') +
-                        '</div>' +
-                    '</div>'
-                );
-            }
-
-            resultGroups.forEach(function(group) {
-                mergeStageHtml.push(
-                    '<div class="merge-result-row">' +
-                        '<div class="bar-row result">' +
-                            '<span class="bar-label">' + group.label + '</span>' +
-                            buildBarColumns(group) +
-                        '</div>' +
-                    '</div>'
-                );
-            });
-
-            standaloneGroups.forEach(function(group) {
-                const rowClass = group.tone === 'result' ? 'bar-row result' : 'bar-row';
-                mergeStageHtml.push(
-                    '<div class="' + rowClass + '">' +
-                        '<span class="bar-label">' + group.label + '</span>' +
-                        buildBarColumns(group) +
-                    '</div>'
-                );
-            });
-
-            mergeStageHtml.push('</div>');
-
-            demoStage.className = 'merge-stage';
-            demoStage.innerHTML = mergeStageHtml.join('');
+            demoStage.innerHTML =
+                '<div class="bar-row">' +
+                    '<span class="bar-label">目前陣列</span>' +
+                    bars +
+                '</div>';
 
             prevButton.disabled = index === 0;
             nextButton.disabled = index === demoSteps.length - 1;
@@ -1594,36 +1269,8 @@ int main(void) {
                 clearInterval(autoplayTimer);
                 autoplayTimer = null;
             }
-
             playButton.textContent = '自動播放';
         }
-
-        applyButton.addEventListener('click', function() {
-            const values = parseInputValues(arrayInput.value);
-
-            if (!values || values.length === 0) {
-                stepDescription.textContent = '請輸入至少一個數字，並以逗號、空白或換行分隔。';
-                return;
-            }
-
-            stopAutoplay();
-            setDemoValues(values, true);
-        });
-
-        randomButton.addEventListener('click', function() {
-            const length = Math.max(2, demoSteps.length ? demoSteps[0].groups[0].values.length : defaultArray.length);
-            const values = createRandomValues(length);
-
-            stopAutoplay();
-            setDemoValues(values, true);
-            stepDescription.textContent = '已隨機產生新資料，可以開始觀察拆分與合併步驟。';
-        });
-
-        arrayInput.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                applyButton.click();
-            }
-        });
 
         function startAutoplay() {
             if (activeStep === demoSteps.length - 1) {
@@ -1638,14 +1285,37 @@ int main(void) {
                     renderStep(activeStep);
                     return;
                 }
-
                 stopAutoplay();
-            }, 1600);
+            }, 1400);
         }
+
+        applyButton.addEventListener('click', function() {
+            const values = parseInputValues(arrayInput.value);
+
+            if (!values || !values.length) {
+                stepDescription.textContent = '請輸入至少一個數字，並以逗號、空白或換行分隔。';
+                return;
+            }
+
+            stopAutoplay();
+            setDemoValues(values, true);
+        });
+
+        randomButton.addEventListener('click', function() {
+            const values = createRandomValues(defaultArray.length);
+            stopAutoplay();
+            setDemoValues(values, true);
+            stepDescription.textContent = '已隨機產生新資料，可以開始觀察分區流程。';
+        });
+
+        arrayInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                applyButton.click();
+            }
+        });
 
         prevButton.addEventListener('click', function() {
             stopAutoplay();
-
             if (activeStep > 0) {
                 activeStep -= 1;
                 renderStep(activeStep);
@@ -1654,7 +1324,6 @@ int main(void) {
 
         nextButton.addEventListener('click', function() {
             stopAutoplay();
-
             if (activeStep < demoSteps.length - 1) {
                 activeStep += 1;
                 renderStep(activeStep);
@@ -1666,7 +1335,6 @@ int main(void) {
                 stopAutoplay();
                 return;
             }
-
             startAutoplay();
         });
 
